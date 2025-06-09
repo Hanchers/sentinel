@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>服务节点录入</title>
+</head>
+<body>
+    <h2>服务节点信息录入</h2>
+
+    <!-- 提交到 /saveNode -->
+    <form th:action="@{/saveNode}" method="post">
+
+        <label>名称:
+            <input type="text" name="name" required />
+        </label><br/>
+        <label>备注:
+            <input type="text" name="remark" />
+        </label><br/>
+        <label>状态:
+            <select name="status">
+                <option value="down">down</option>
+                <option value="wait">wait</option>
+                <option value="ok">ok</option>
+            </select>
+        </label><br/>
+        <label>所属集群 ID:
+            <input type="number" name="clusterId" required />
+        </label><br/>
+        <label>健康检查方法:
+            <select name="healthCheckMethod">
+                <option value="http">http</option>
+                <option value="bash">bash</option>
+            </select>
+        </label><br/>
+        <label>健康检查命令:
+            <input type="text" name="healthCheckCmd" />
+        </label><br/>
+        <label>重启方法:
+            <select name="restartMethod">
+                <option value="bash">bash</option>
+            </select>
+        </label><br/>
+        <label>重启命令:
+            <input type="text" name="restartCmd" />
+        </label><br/><br/>
+
+        <button type="submit">提交节点信息</button>
+    </form>
+</body>
+</html>

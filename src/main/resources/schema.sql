@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS service_node (
     health_check_method TEXT NOT NULL, -- 健康检查方法、类型,枚举:http、bash
     health_check_cmd TEXT, -- 健康检查命令
     restart_method TEXT NOT NULL, -- 重启类型、方法,枚举:bash
-    restart_cmd TEXT -- 重启命令
+    restart_cmd TEXT, -- 重启命令
+    create_time TEXT NOT NULL default (DATETIME('now', 'localtime')),
+    update_time TEXT NOT NULL default (DATETIME('now', 'localtime'))
 );
 
 -- 服务集群表
@@ -18,7 +20,9 @@ CREATE TABLE IF NOT EXISTS service_cluster (
     name TEXT NOT NULL, -- 服务节点名称
     remark TEXT, -- 备注
     status TEXT NOT NULL default 'down', -- 节点状态，枚举：down-不可用、up-达到最小存活数量、ok-全部服务可用、wait-等待依赖恢复、
-    min_alive_num INTEGER NOT NULL default 1 -- 服务集群最小存活数量
+    min_alive_num INTEGER NOT NULL default 1, -- 服务集群最小存活数量
+    create_time TEXT NOT NULL default (DATETIME('now', 'localtime')),
+    update_time TEXT NOT NULL default (DATETIME('now', 'localtime'))
 );
 
 -- 依赖的有向无环图
@@ -26,5 +30,8 @@ CREATE TABLE IF NOT EXISTS dependent_dag (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     source_cluster_id TEXT NOT NULL default 'start',
     target_cluster_id TEXT NOT NULL default 'end',
+    create_time TEXT NOT NULL default (DATETIME('now', 'localtime')),
+    update_time TEXT NOT NULL default (DATETIME('now', 'localtime')),
     UNIQUE(source_cluster_id, target_cluster_id)
 );
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>服务集群列表</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+<h1>服务集群列表</h1>
+<a href="/service-clusters/new">新增服务集群</a>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>名称</th>
+        <th>备注</th>
+        <th>状态</th>
+        <th>最小存活数量</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cluster : ${serviceClusters}">
+        <td th:text="${cluster.id}"></td>
+        <td th:text="${cluster.name}"></td>
+        <td th:text="${cluster.remark}"></td>
+        <td th:text="${cluster.status}"></td>
+        <td th:text="${cluster.minAliveNum}"></td>
+        <td class="action-buttons">
+            <a th:href="@{/service-clusters/{id}/edit(id=${cluster.id})}">编辑</a>
+            <a th:href="@{/service-clusters/{id}/delete(id=${cluster.id})}"
+               onclick="return confirm('确定要删除吗?')">删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
