@@ -1,5 +1,6 @@
 package com.hancher.sentinel.processor;
 
+import com.hancher.sentinel.processor.dto.BashCmdParam;
 import com.hancher.sentinel.processor.dto.CmdParam;
 import com.hancher.sentinel.processor.dto.Result;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,11 @@ public class LinuxBashLineProcessor implements CmdProcessor {
 
 
     @Override
-    public Result process(CmdParam cmdParam) {
+    public Result process(CmdParam param) {
+        if (!(param instanceof BashCmdParam cmdParam)) {
+            return Result.fail("参数错误");
+        }
+
         String cmd = cmdParam.getCmd();
         List<String> args = cmdParam.getArgs();
 

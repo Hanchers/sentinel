@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 @Data
 public class Result {
     private boolean success;
-    private String output;
+    private Object output;
 
 
     /**
@@ -18,7 +18,7 @@ public class Result {
      * @param output 返回内容
      * @return result
      */
-    public static Result success(String output) {
+    public static Result success(Object output) {
         return Result.builder()
                 .success(true)
                 .output(output)

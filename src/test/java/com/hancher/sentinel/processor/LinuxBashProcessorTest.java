@@ -1,5 +1,6 @@
 package com.hancher.sentinel.processor;
 
+import com.hancher.sentinel.processor.dto.BashCmdParam;
 import com.hancher.sentinel.processor.dto.CmdParam;
 import com.hancher.sentinel.processor.dto.Result;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ class LinuxBashProcessorTest {
     @Test
     void processPing() {
         long start = System.currentTimeMillis();
-        CmdParam param = CmdParam.builder().cmd("ping").args(List.of("-c", "4", "www.baidu.com")).build();
+        CmdParam param = BashCmdParam.builder().cmd("ping").args(List.of("-c", "4", "www.baidu.com")).build();
         Result result = processor.process(param);
         System.out.println(result.getOutput());
         Assert.isTrue(result.isSuccess(), "ping失败");
