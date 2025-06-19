@@ -7,22 +7,21 @@ import com.mybatisflex.annotation.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
 /**
- * 服务集群
- * @date 2025-06-19 10:05:56
+ * 项目依赖有向无环图
+ * @date 2025-06-19 10:06:45
  * @author hancher
  * @since 1.0
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-@Table("service_cluster")
+@Table("dependent_dag")
 @Accessors(chain = true)
-public class ServiceCluster extends BaseEntity{
+public class DependentDag extends BaseEntity{
 
     @Id(keyType = KeyType.Auto)
     private Long id;
-    private String name;
-    private String remark;
-    private ServiceClusterStatusEnum status;
-    private Integer minAliveNum;
+    private String sourceClusterId;
+    private String targetClusterId;
 }

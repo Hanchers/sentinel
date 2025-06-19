@@ -1,4 +1,4 @@
-package com.hancher.sentinel.processor;
+package com.hancher.sentinel.core.processor;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.Container;
@@ -7,9 +7,9 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
-import com.hancher.sentinel.processor.dto.CmdParam;
-import com.hancher.sentinel.processor.dto.DockerClientCmdParam;
-import com.hancher.sentinel.processor.dto.Result;
+import com.hancher.sentinel.core.processor.dto.CmdParam;
+import com.hancher.sentinel.core.processor.dto.DockerClientCmdParam;
+import com.hancher.sentinel.core.processor.dto.Result;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;

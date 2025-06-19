@@ -1,4 +1,4 @@
-package com.hancher.sentinel.processor.dto;
+package com.hancher.sentinel.core.processor.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 import java.time.Duration;
-import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Builder

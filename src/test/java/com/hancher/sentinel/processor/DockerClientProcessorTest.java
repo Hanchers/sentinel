@@ -1,13 +1,11 @@
 package com.hancher.sentinel.processor;
 
-import com.hancher.sentinel.processor.dto.CmdParam;
-import com.hancher.sentinel.processor.dto.DockerClientCmdParam;
-import com.hancher.sentinel.processor.dto.Result;
-import org.junit.jupiter.api.BeforeEach;
+import com.hancher.sentinel.core.processor.CmdProcessor;
+import com.hancher.sentinel.core.processor.DockerClientProcessor;
+import com.hancher.sentinel.core.processor.dto.DockerClientCmdParam;
+import com.hancher.sentinel.core.processor.dto.Result;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
-
-import java.util.List;
 
 class DockerClientProcessorTest {
 
@@ -20,8 +18,8 @@ class DockerClientProcessorTest {
     void processPs() {
         long start = System.currentTimeMillis();
         DockerClientCmdParam param = DockerClientCmdParam.builder()
-                .tcpHost("tcp://192.168.1.2:2376")
-                .certPath("temp/certs")
+                .tcpHost("tcp://192.168.202.102:2376")
+                .certPath("/Users/hancher/work/temp/certs")
                 .cmd(DockerClientCmdParam.DockerCmd.ps)
                 .build();
 

@@ -1,8 +1,8 @@
-package com.hancher.sentinel.processor;
+package com.hancher.sentinel.core.processor;
 
-import com.hancher.sentinel.processor.dto.BashCmdParam;
-import com.hancher.sentinel.processor.dto.CmdParam;
-import com.hancher.sentinel.processor.dto.Result;
+import com.hancher.sentinel.core.processor.dto.BashCmdParam;
+import com.hancher.sentinel.core.processor.dto.CmdParam;
+import com.hancher.sentinel.core.processor.dto.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.*;
 import org.apache.commons.io.output.ByteArrayOutputStream;

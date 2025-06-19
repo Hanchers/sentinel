@@ -1,4 +1,4 @@
-package com.hancher.sentinel.processor.dto;
+package com.hancher.sentinel.core.processor.dto;
 
 import lombok.Builder;
 import lombok.Data;
