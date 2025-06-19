@@ -21,7 +21,7 @@ public enum ServiceClusterStatusEnum {
      */
     ok,
     /**
-     * 等待依赖启动
+     * 本身下线，且等待依赖启动
      */
     wait
     ;
