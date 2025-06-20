@@ -1,6 +1,5 @@
 package com.hancher.sentinel.entity;
 
-import com.hancher.sentinel.enums.ServiceClusterStatusEnum;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.annotation.Table;
@@ -22,6 +21,6 @@ public class DependentDag extends BaseEntity{
 
     @Id(keyType = KeyType.Auto)
     private Long id;
-    private String sourceClusterId;
-    private String targetClusterId;
+    private Long sourceClusterId;
+    private Long targetClusterId;
 }

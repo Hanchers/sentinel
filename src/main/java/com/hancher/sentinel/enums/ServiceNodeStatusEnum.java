@@ -17,9 +17,5 @@ public enum ServiceNodeStatusEnum {
      * 存活可用
      */
     ok,
-    /**
-     * 本身下线，且等待依赖启动
-     */
-    wait
     ;
 }

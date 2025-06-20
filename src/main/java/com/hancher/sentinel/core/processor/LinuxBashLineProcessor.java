@@ -3,9 +3,11 @@ package com.hancher.sentinel.core.processor;
 import com.hancher.sentinel.core.processor.dto.BashCmdParam;
 import com.hancher.sentinel.core.processor.dto.CmdParam;
 import com.hancher.sentinel.core.processor.dto.Result;
+import com.hancher.sentinel.enums.ProcessorTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.*;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -17,12 +19,22 @@ import java.util.Set;
  * @author hancher
  * @date 2025/06/10
  */
+@Component
 @Slf4j
-public class LinuxBashLineProcessor implements CmdProcessor {
+public class LinuxBashLineProcessor extends AbstractCmdProcessor {
 
     // 白名单
     Set<String> whiteCmdSet = Set.of("ping","ls","java","docker");
 
+    /**
+     * 支持的命令类型
+     *
+     * @return 命令类型
+     */
+    @Override
+    public ProcessorTypeEnum supportType() {
+        return ProcessorTypeEnum.BASH;
+    }
 
     @Override
     public Result process(CmdParam param) {

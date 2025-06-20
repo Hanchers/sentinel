@@ -10,7 +10,9 @@ import com.github.dockerjava.transport.DockerHttpClient;
 import com.hancher.sentinel.core.processor.dto.CmdParam;
 import com.hancher.sentinel.core.processor.dto.DockerClientCmdParam;
 import com.hancher.sentinel.core.processor.dto.Result;
+import com.hancher.sentinel.enums.ProcessorTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.List;
@@ -21,8 +23,20 @@ import java.util.List;
  * <a href="https://docs.docker.com/reference/cli/dockerd/#daemon-socket-option">docker daemon 版本文档</a><p/>
  * <a href="https://docs.docker.com/engine/security/protect-access/">docker tls连接</a><p/>
  */
+@Component
 @Slf4j
-public class DockerClientProcessor implements CmdProcessor {
+public class DockerClientProcessor extends AbstractCmdProcessor {
+
+    /**
+     * 支持的命令类型
+     *
+     * @return 命令类型
+     */
+    @Override
+    public ProcessorTypeEnum supportType() {
+        return ProcessorTypeEnum.DOCKER_CLIENT;
+    }
+
     @Override
     public Result process(CmdParam cmdParam) {
         if (!(cmdParam instanceof DockerClientCmdParam dockerParam)) {
@@ -77,4 +91,6 @@ public class DockerClientProcessor implements CmdProcessor {
         }
         return Result.fail("未知命令");
     }
+
+
 }
