@@ -37,6 +37,17 @@ public class DockerClientProcessor extends AbstractCmdProcessor {
         return ProcessorTypeEnum.DOCKER_CLIENT;
     }
 
+    /**
+     * 解析命令参数
+     *
+     * @param param 命令参数 :
+     * @return 解析结果
+     */
+    @Override
+    public CmdParam parseCmdParam(String param) {
+        return DockerClientCmdParam.builder().build();
+    }
+
     @Override
     public Result process(CmdParam cmdParam) {
         if (!(cmdParam instanceof DockerClientCmdParam dockerParam)) {

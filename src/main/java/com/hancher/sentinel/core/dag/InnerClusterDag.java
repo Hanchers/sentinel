@@ -41,7 +41,6 @@ public class InnerClusterDag implements InitializingBean {
     public void afterPropertiesSet() {
 
         refresh();
-        System.out.println(DAG);
     }
 
     public void refresh() {

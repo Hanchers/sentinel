@@ -3,6 +3,8 @@ package com.hancher.sentinel.core.processor;
 import com.hancher.sentinel.core.processor.dto.CmdParam;
 import com.hancher.sentinel.core.processor.dto.Result;
 import com.hancher.sentinel.enums.ProcessorTypeEnum;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * 命令执行器
@@ -10,6 +12,7 @@ import com.hancher.sentinel.enums.ProcessorTypeEnum;
  * @author hancher
  * @since 1.0
  */
+@Validated
 public interface CmdProcessor {
 
     /**
@@ -19,11 +22,18 @@ public interface CmdProcessor {
     ProcessorTypeEnum supportType();
 
     /**
+     * 解析命令参数
+     * @param param 命令参数
+     * @return 解析结果
+     */
+    CmdParam parseCmdParam(String param);
+
+    /**
      * 执行命令
      * @param cmdParam 命令参数
      * @return 执行结果
      */
-    Result process(CmdParam cmdParam);
+    Result process(@Valid CmdParam cmdParam);
 
 
 }

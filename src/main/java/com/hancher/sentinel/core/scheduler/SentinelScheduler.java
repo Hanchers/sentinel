@@ -1,6 +1,8 @@
 package com.hancher.sentinel.core.scheduler;
 
 import com.hancher.sentinel.core.dag.InnerClusterDag;
+import com.hancher.sentinel.core.processor.DefaultCmdProcessor;
+import com.hancher.sentinel.core.processor.dto.Result;
 import com.hancher.sentinel.entity.ServiceCluster;
 import com.hancher.sentinel.entity.ServiceNode;
 import com.hancher.sentinel.enums.ServiceClusterStatusEnum;
@@ -28,6 +30,7 @@ public class SentinelScheduler {
     private final ServiceNodeService nodeService;
     private final InnerClusterDag innerClusterDag;
     private final ServiceClusterService clusterService;
+    private final DefaultCmdProcessor cmdProcessor;
 
     /**
      * 核心心跳探活任务
@@ -119,9 +122,16 @@ public class SentinelScheduler {
 
         // 下线节点尝试重启
         String restartMethod = node.getRestartMethod();
-        System.out.println("尝试重启节点：" + restartMethod);
-        System.out.println("重启命令：" + node.getRestartCmd());
+        log.info("----尝试重启：{} {}", restartMethod, node.getRestartCmd());
+        Result restart = cmdProcessor.restart(node);
+        log.info("----重启结果：{}", restart);
 
+        if (restart.isSuccess()) {
+            node.setStatus(ServiceNodeStatusEnum.ok);
+            node.setUpdateTime(LocalDateTime.now());
+            nodeService.updateById(node);
+            return 1;
+        }
         return 0;
     }
 
@@ -154,9 +164,8 @@ public class SentinelScheduler {
      * 项目依赖状态扫描
      */
     private void scanProjectHealth() {
-        log.info("重新扫描项目依赖情况，更新集群状态图");
-
-        //
+        log.info("【心跳】根据项目依赖情况重新扫描项目节点状态，更新集群状态图");
+//        Set<Long> next = innerClusterDag.getNext(DagNodeEnum.start.getCode());
     }
 
 }

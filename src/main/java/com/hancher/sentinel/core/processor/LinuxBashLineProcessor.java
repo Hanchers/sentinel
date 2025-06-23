@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +35,33 @@ public class LinuxBashLineProcessor extends AbstractCmdProcessor {
     @Override
     public ProcessorTypeEnum supportType() {
         return ProcessorTypeEnum.BASH;
+    }
+
+    /**
+     * 解析命令参数
+     *
+     * @param param 命令行： ping -c 5 192.168.1.1
+     * @return 解析结果
+     */
+    @Override
+    public CmdParam parseCmdParam(String param) {
+        Assert.hasText(param, "bash 命令不能为空");
+        String cmd = null;
+        List<String> args = new ArrayList<>();
+        String[] split = param.split(" ");
+        for (int i = 0; i < split.length; i++) {
+            if (i == 0) {
+                cmd = split[i];
+            } else {
+                args.add(split[i]);
+            }
+        }
+
+        return BashCmdParam.builder()
+                .cmd(cmd)
+                .args(args)
+                .build();
+
     }
 
     @Override
