@@ -22,5 +22,5 @@ public enum DagNodeEnum {
     end(-1),
     ;
 
-    private final int code;
+    private final long code;
 }

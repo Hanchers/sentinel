@@ -1,6 +1,7 @@
 package com.hancher.sentinel.core.dag;
 
 import com.hancher.sentinel.entity.DependentDag;
+import com.hancher.sentinel.enums.DagNodeEnum;
 import com.hancher.sentinel.service.DependentDagService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +13,9 @@ import java.util.*;
 /**
  * 内部缓存依赖关系构建成图<p/>
  * 支持正向、反向 依赖关系寻找
- * @date 2025-06-20 09:05:53
+ *
  * @author hancher
+ * @date 2025-06-20 09:05:53
  * @since 1.0
  */
 @Slf4j
@@ -53,19 +55,46 @@ public class InnerClusterDag implements InitializingBean {
         }
 
         // 检查环，不允许环的出现
+        checkCircle(new HashSet<>(), DagNodeEnum.start.getCode());
     }
 
+    /**
+     * 检查环
+     * <p/>深度优先遇到重复节点
+     *
+     * @param exist 从起点开始的所有的节点
+     * @param start 开始节点
+     */
+    private void checkCircle(Set<Long> exist, Long start) {
+        exist.add(start);
+        log.debug("环检查过程：{}", exist);
+
+        Set<Long> next = DAG.getOrDefault(start, new HashSet<>());
+        for (Long id : next) {
+            if (exist.contains(id)) {
+                log.error("集群存在循环依赖:{}, 环节点：{}", exist, id);
+                throw new RuntimeException("集群存在循环依赖");
+            }
+            checkCircle(exist, id);
+        }
+
+        // 移除当前节点， 针对菱形依赖
+        exist.remove(start);
+    }
 
     /**
      * 依赖的前置节点
+     *
      * @param clusterId 节点
      * @return 前置节点组
      */
     public Set<Long> getPre(Long clusterId) {
         return new HashSet<>(REVERSE_DAG.getOrDefault(clusterId, Collections.emptySet()));
     }
+
     /**
      * 依赖的后置节点
+     *
      * @param clusterId 节点
      * @return 后置节点组
      */
@@ -76,6 +105,7 @@ public class InnerClusterDag implements InitializingBean {
 
     /**
      * 从集群组中获取最前置的节点组
+     *
      * @param clusterIds 集群id 组
      * @return
      */
@@ -89,8 +119,8 @@ public class InnerClusterDag implements InitializingBean {
             pre.retainAll(tmp);
             // 没有交集，说明没有前置节点
             if (!pre.isEmpty()) {
-               first.remove(clusterId);
-           }
+                first.remove(clusterId);
+            }
         }
 
         return first;
