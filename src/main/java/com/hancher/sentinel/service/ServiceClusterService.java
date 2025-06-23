@@ -19,6 +19,13 @@ public interface ServiceClusterService extends IService<ServiceCluster> {
      * @param status 状态
      * @return 集群列表
      */
-    List<ServiceCluster> selectListByStatus(ServiceClusterStatusEnum... status);
+    List<ServiceCluster> listByStatus(ServiceClusterStatusEnum... status);
+
+    /**
+     * 根据id查询
+     * @param ids id列表
+     * @return 集群列表
+     */
+    List<ServiceCluster> listByIds(List<Long> ids);
 
 }

@@ -1,6 +1,5 @@
 package com.hancher.sentinel.core.processor;
 
-import com.hancher.sentinel.core.processor.dto.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,5 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultCmdProcessor  {
 
-    public Result process() {
 
-    }
 }

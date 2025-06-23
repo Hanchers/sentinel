@@ -27,7 +27,19 @@ public class ServiceClusterServiceImpl extends ServiceImpl<ServiceClusterMapper,
      * @return 集群列表
      */
     @Override
-    public List<ServiceCluster> selectListByStatus(ServiceClusterStatusEnum... status) {
+    public List<ServiceCluster> listByStatus(ServiceClusterStatusEnum... status) {
         return this.list(QueryWrapper.create().in(ServiceCluster::getStatus, Arrays.stream(status).toList()));
+    }
+
+    /**
+     * 根据id查询
+     *
+     * @param ids id列表
+     * @return 集群列表
+     */
+    @Override
+    public List<ServiceCluster> listByIds(List<Long> ids) {
+        return this.list(QueryWrapper.create().in(ServiceCluster::getId, ids));
+
     }
 }

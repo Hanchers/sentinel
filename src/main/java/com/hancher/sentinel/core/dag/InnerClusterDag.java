@@ -36,7 +36,7 @@ public class InnerClusterDag implements InitializingBean {
      * 项目启动时初始化
      */
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
 
         refresh();
         System.out.println(DAG);
@@ -51,6 +51,8 @@ public class InnerClusterDag implements InitializingBean {
             DAG.computeIfAbsent(dag.getSourceClusterId(), k -> new HashSet<>()).add(dag.getTargetClusterId());
             REVERSE_DAG.computeIfAbsent(dag.getTargetClusterId(), k -> new HashSet<>()).add(dag.getSourceClusterId());
         }
+
+        // 检查环，不允许环的出现
     }
 
 
@@ -74,7 +76,7 @@ public class InnerClusterDag implements InitializingBean {
 
     /**
      * 从集群组中获取最前置的节点组
-     * @param clusterIds
+     * @param clusterIds 集群id 组
      * @return
      */
     public Set<Long> getFirst(List<Long> clusterIds) {
