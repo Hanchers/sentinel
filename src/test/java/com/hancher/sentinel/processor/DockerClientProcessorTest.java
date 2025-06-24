@@ -19,7 +19,7 @@ class DockerClientProcessorTest {
         long start = System.currentTimeMillis();
         DockerClientCmdParam param = DockerClientCmdParam.builder()
                 .tcpHost("tcp://192.168.202.102:2376")
-                .certPath("/Users/hancher/work/temp/certs")
+                .certPath("certs")
                 .cmd(DockerClientCmdParam.DockerCmd.ps)
                 .build();
 

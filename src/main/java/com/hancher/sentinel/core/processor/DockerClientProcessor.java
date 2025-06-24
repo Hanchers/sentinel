@@ -45,7 +45,12 @@ public class DockerClientProcessor extends AbstractCmdProcessor {
      */
     @Override
     public CmdParam parseCmdParam(String param) {
-        return DockerClientCmdParam.builder().build();
+        DockerClientCmdParam dockerParam = DockerClientCmdParam.builder().build();
+
+        String certPath = sentinelConfig.getProcessor().getDocker().getCertPath();
+        dockerParam.setCertPath(certPath);
+
+        return dockerParam;
     }
 
     @Override

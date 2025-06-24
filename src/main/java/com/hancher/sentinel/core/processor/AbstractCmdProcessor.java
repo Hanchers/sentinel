@@ -1,6 +1,8 @@
 package com.hancher.sentinel.core.processor;
 
+import com.hancher.sentinel.core.config.SentinelConfig;
 import com.hancher.sentinel.enums.ProcessorTypeEnum;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -16,7 +18,8 @@ import java.util.Optional;
  */
 @Slf4j
 public  abstract class AbstractCmdProcessor implements InitializingBean, CmdProcessor {
-
+    @Resource
+    protected SentinelConfig sentinelConfig;
     /**
      * 实例
      */
