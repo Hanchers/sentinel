@@ -7,6 +7,7 @@ import com.hancher.sentinel.enums.ProcessorTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.*;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -48,11 +49,11 @@ public class LinuxBashLineProcessor extends AbstractCmdProcessor {
         Assert.hasText(param, "bash 命令不能为空");
         String cmd = null;
         List<String> args = new ArrayList<>();
-        String[] split = param.split(" ");
+        String[] split = param.trim().split(" ");
         for (int i = 0; i < split.length; i++) {
             if (i == 0) {
                 cmd = split[i];
-            } else {
+            } else if (StringUtils.isNotBlank(split[i])){
                 args.add(split[i]);
             }
         }

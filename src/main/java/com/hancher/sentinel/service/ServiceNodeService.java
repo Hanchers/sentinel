@@ -18,7 +18,7 @@ public interface ServiceNodeService extends IService<ServiceNode> {
      * @param clusterId 集群id
      * @return 节点列表
      */
-    List<ServiceNode> listClusterNodesByStatus(Long clusterId);
+    List<ServiceNode> listByClusterId(Long clusterId);
 
     /**
      * 获取集群下节点数量

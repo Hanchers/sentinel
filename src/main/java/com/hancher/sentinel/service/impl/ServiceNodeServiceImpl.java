@@ -25,7 +25,7 @@ public class ServiceNodeServiceImpl extends ServiceImpl<ServiceNodeMapper, Servi
      * @return 节点列表
      */
     @Override
-    public List<ServiceNode> listClusterNodesByStatus(Long clusterId) {
+    public List<ServiceNode> listByClusterId(Long clusterId) {
         return this.list(QueryWrapper.create().eq(ServiceNode::getClusterId, clusterId));
     }
 

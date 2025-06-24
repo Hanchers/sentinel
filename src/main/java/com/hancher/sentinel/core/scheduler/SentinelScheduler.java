@@ -5,6 +5,7 @@ import com.hancher.sentinel.core.processor.DefaultCmdProcessor;
 import com.hancher.sentinel.core.processor.dto.Result;
 import com.hancher.sentinel.entity.ServiceCluster;
 import com.hancher.sentinel.entity.ServiceNode;
+import com.hancher.sentinel.enums.DagNodeEnum;
 import com.hancher.sentinel.enums.ServiceClusterStatusEnum;
 import com.hancher.sentinel.enums.ServiceNodeStatusEnum;
 import com.hancher.sentinel.service.ServiceClusterService;
@@ -86,7 +87,7 @@ public class SentinelScheduler {
         }
         // 不健康集群的节点
         int success = 0;
-        List<ServiceNode> nodes = nodeService.listClusterNodesByStatus(cluster.getId());
+        List<ServiceNode> nodes = nodeService.listByClusterId(cluster.getId());
         for (ServiceNode node : nodes) {
             success += restartNode(node);
         }
@@ -165,7 +166,95 @@ public class SentinelScheduler {
      */
     private void scanProjectHealth() {
         log.info("【心跳】根据项目依赖情况重新扫描项目节点状态，更新集群状态图");
-//        Set<Long> next = innerClusterDag.getNext(DagNodeEnum.start.getCode());
+        // 从起点开始，一个集群一个集群的扫描
+        checkClusters(Set.of(DagNodeEnum.start.getCode()));
     }
 
+
+    /**
+     * 集群状态扫描, 广度优先遍历
+     * @param clusterIds 每一层的集群ID
+     */
+    private void checkClusters(Set<Long> clusterIds) {
+        if (clusterIds.isEmpty()) {
+            return;
+        }
+
+        Set<Long> next = new HashSet<>();
+        // 检查集群下节点状态
+        for (Long id : clusterIds) {
+            checkCluster(id);
+            next.addAll(innerClusterDag.getNext(id));
+        }
+
+        // 查验下一层集群
+        checkClusters(next);
+    }
+
+    /**
+     * 集群状态扫描
+     * @param clusterId 集群ID
+     */
+    private void checkCluster(Long clusterId) {
+        // 开始和结束节点不处理
+        if (clusterId == DagNodeEnum.start.getCode() || clusterId == DagNodeEnum.end.getCode()) {
+            log.debug("【心跳】跳过开始节点和结束节点");
+            return;
+        }
+        int success = 0;
+        List<ServiceNode> nodes = nodeService.listByClusterId(clusterId);
+        for (ServiceNode node : nodes) {
+            success += checkNode(node);
+        }
+
+        ServiceCluster cluster = clusterService.getById(clusterId);
+        if (success == nodes.size()) {
+            cluster.setStatus(ServiceClusterStatusEnum.ok);
+        } else if (success >= cluster.getMinAliveNum()){
+            cluster.setStatus(ServiceClusterStatusEnum.up);
+        } else  {
+            // 查验前置节点是否下线，因为bfs,此时认为前置节点已经验证结束了
+            Set<Long> pre = innerClusterDag.getPre(clusterId);
+            List<ServiceCluster> preClusters = clusterService.listByIds(new ArrayList<>(pre));
+            if (preClusters.stream()
+                    .anyMatch(c -> c.getStatus() == ServiceClusterStatusEnum.down
+                            || c.getStatus() == ServiceClusterStatusEnum.wait)) {
+                // 前置集群未启动，保持依赖
+                cluster.setStatus(ServiceClusterStatusEnum.wait);
+            } else {
+                cluster.setStatus(ServiceClusterStatusEnum.down);
+            }
+        }
+        log.info("【心跳】扫描集群状态：{}的状态为{}", clusterId, cluster.getStatus());
+        cluster.setUpdateTime(LocalDateTime.now());
+        clusterService.updateById(cluster);
+    }
+
+
+    /**
+     * 节点状态扫描
+     * @param node 节点
+     * @return 1成功，0失败
+     */
+    private int checkNode(ServiceNode node) {
+        log.info("【心跳】扫描服务节点状态：{}，{}的状态为{}", node.getId(), node.getName(), node.getStatus());
+
+        // 下线节点尝试重启
+        String checkMethod = node.getHealthCheckMethod();
+        log.info("【心跳】：健康检查{} {}", checkMethod, node.getHealthCheckCmd());
+        Result restart = cmdProcessor.healthCheck(node);
+        log.info("【心跳】】检查结果：{}", restart);
+
+        int success = 0;
+        node.setStatus(ServiceNodeStatusEnum.down);
+        if (restart.isSuccess()) {
+            node.setStatus(ServiceNodeStatusEnum.ok);
+            success = 1;
+        }
+
+        node.setUpdateTime(LocalDateTime.now());
+        nodeService.updateById(node);
+
+        return success;
+    }
 }
