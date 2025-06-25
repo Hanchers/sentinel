@@ -2,9 +2,9 @@ package com.hancher.sentinel.processor;
 
 import com.hancher.sentinel.core.processor.CmdProcessor;
 import com.hancher.sentinel.core.processor.LinuxBashLineProcessor;
-import com.hancher.sentinel.core.processor.dto.BashCmdParam;
-import com.hancher.sentinel.core.processor.dto.CmdParam;
-import com.hancher.sentinel.core.processor.dto.Result;
+import com.hancher.sentinel.core.dto.BashCmdParam;
+import com.hancher.sentinel.core.dto.CmdParam;
+import com.hancher.sentinel.core.dto.Result;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 

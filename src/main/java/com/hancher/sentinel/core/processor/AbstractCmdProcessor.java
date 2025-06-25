@@ -1,5 +1,6 @@
 package com.hancher.sentinel.core.processor;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.hancher.sentinel.core.config.SentinelConfig;
 import com.hancher.sentinel.enums.ProcessorTypeEnum;
 import jakarta.annotation.Resource;
@@ -20,6 +21,8 @@ import java.util.Optional;
 public  abstract class AbstractCmdProcessor implements InitializingBean, CmdProcessor {
     @Resource
     protected SentinelConfig sentinelConfig;
+    @Resource
+    protected JsonMapper jsonMapper;
     /**
      * 实例
      */

@@ -1,4 +1,4 @@
-package com.hancher.sentinel.core.processor.dto;
+package com.hancher.sentinel.core.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

@@ -2,8 +2,8 @@ package com.hancher.sentinel.processor;
 
 import com.hancher.sentinel.core.processor.CmdProcessor;
 import com.hancher.sentinel.core.processor.DockerClientProcessor;
-import com.hancher.sentinel.core.processor.dto.DockerClientCmdParam;
-import com.hancher.sentinel.core.processor.dto.Result;
+import com.hancher.sentinel.core.dto.DockerClientCmdParam;
+import com.hancher.sentinel.core.dto.Result;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 

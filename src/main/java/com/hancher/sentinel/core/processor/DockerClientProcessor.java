@@ -7,10 +7,11 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
-import com.hancher.sentinel.core.processor.dto.CmdParam;
-import com.hancher.sentinel.core.processor.dto.DockerClientCmdParam;
-import com.hancher.sentinel.core.processor.dto.Result;
+import com.hancher.sentinel.core.dto.CmdParam;
+import com.hancher.sentinel.core.dto.DockerClientCmdParam;
+import com.hancher.sentinel.core.dto.Result;
 import com.hancher.sentinel.enums.ProcessorTypeEnum;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +41,7 @@ public class DockerClientProcessor extends AbstractCmdProcessor {
     /**
      * 解析命令参数
      *
-     * @param param 命令参数 :
+     * @param param json参数: key 与字段值一致
      * @return 解析结果
      */
     @Override
@@ -54,7 +55,7 @@ public class DockerClientProcessor extends AbstractCmdProcessor {
     }
 
     @Override
-    public Result process(CmdParam cmdParam) {
+    public Result process(@Valid CmdParam cmdParam) {
         if (!(cmdParam instanceof DockerClientCmdParam dockerParam)) {
             return Result.fail("参数错误");
         }

@@ -1,7 +1,7 @@
 package com.hancher.sentinel.core.processor;
 
-import com.hancher.sentinel.core.processor.dto.CmdParam;
-import com.hancher.sentinel.core.processor.dto.Result;
+import com.hancher.sentinel.core.dto.CmdParam;
+import com.hancher.sentinel.core.dto.Result;
 import com.hancher.sentinel.enums.ProcessorTypeEnum;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;

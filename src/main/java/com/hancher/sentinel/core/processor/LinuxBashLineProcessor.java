@@ -1,8 +1,8 @@
 package com.hancher.sentinel.core.processor;
 
-import com.hancher.sentinel.core.processor.dto.BashCmdParam;
-import com.hancher.sentinel.core.processor.dto.CmdParam;
-import com.hancher.sentinel.core.processor.dto.Result;
+import com.hancher.sentinel.core.dto.BashCmdParam;
+import com.hancher.sentinel.core.dto.CmdParam;
+import com.hancher.sentinel.core.dto.Result;
 import com.hancher.sentinel.enums.ProcessorTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.*;

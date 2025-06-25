@@ -1,8 +1,9 @@
 package com.hancher.sentinel.core.scheduler;
 
 import com.hancher.sentinel.core.dag.InnerClusterDag;
-import com.hancher.sentinel.core.processor.DefaultCmdProcessor;
-import com.hancher.sentinel.core.processor.dto.Result;
+import com.hancher.sentinel.core.dto.Result;
+import com.hancher.sentinel.core.health.HealthCheckerDelegator;
+import com.hancher.sentinel.core.starter.NodeStarterDelegator;
 import com.hancher.sentinel.entity.ServiceCluster;
 import com.hancher.sentinel.entity.ServiceNode;
 import com.hancher.sentinel.enums.DagNodeEnum;
@@ -31,7 +32,8 @@ public class SentinelScheduler {
     private final ServiceNodeService nodeService;
     private final InnerClusterDag innerClusterDag;
     private final ServiceClusterService clusterService;
-    private final DefaultCmdProcessor cmdProcessor;
+    private final NodeStarterDelegator nodeStarterDelegator;
+    private final HealthCheckerDelegator healthCheckerDelegator;
 
     /**
      * 核心心跳探活任务
@@ -58,7 +60,7 @@ public class SentinelScheduler {
         // 查询所有下线的集群
         List<ServiceCluster> downClusters = clusterService.listByStatus(ServiceClusterStatusEnum.down,ServiceClusterStatusEnum.up);
         if (downClusters.isEmpty()) {
-            log.debug("无下线或等待集群，跳过。。");
+            log.info("无下线或等待集群，跳过。。");
             return;
         }
         Map<Long, ServiceCluster> map = downClusters.stream().collect(Collectors.toMap(ServiceCluster::getId, Function.identity(), (o1, o2) -> o1));
@@ -124,7 +126,7 @@ public class SentinelScheduler {
         // 下线节点尝试重启
         String restartMethod = node.getRestartMethod();
         log.info("----尝试重启：{} {}", restartMethod, node.getRestartCmd());
-        Result restart = cmdProcessor.restart(node);
+        Result restart = nodeStarterDelegator.restartNode(node);
         log.info("----重启结果：{}", restart);
 
         if (restart.isSuccess()) {
@@ -242,7 +244,7 @@ public class SentinelScheduler {
         // 下线节点尝试重启
         String checkMethod = node.getHealthCheckMethod();
         log.info("【心跳】：健康检查{} {}", checkMethod, node.getHealthCheckCmd());
-        Result restart = cmdProcessor.healthCheck(node);
+        Result restart = healthCheckerDelegator.checkNode(node);
         log.info("【心跳】】检查结果：{}", restart);
 
         int success = 0;
