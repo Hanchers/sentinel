@@ -2,17 +2,19 @@ package com.hancher.sentinel.core.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @Accessors(chain = true)
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class DockerClientCmdParam extends CmdParam {
 
     /**
@@ -36,6 +38,10 @@ public class DockerClientCmdParam extends CmdParam {
 
     private String containerIdOrName;
 
+    /**
+     * docker 命令参数
+     */
+    private Map<String, String> args = new HashMap<>();
 
 
     public static enum DockerCmd {
@@ -43,6 +49,7 @@ public class DockerClientCmdParam extends CmdParam {
          * 获取所有容器
          */
         ps,
+        ps_filter,
         /**
          * 启动容器
          */

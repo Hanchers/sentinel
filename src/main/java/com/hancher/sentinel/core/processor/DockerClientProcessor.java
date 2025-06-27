@@ -13,6 +13,7 @@ import com.hancher.sentinel.core.dto.Result;
 import com.hancher.sentinel.enums.ProcessorTypeEnum;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -46,10 +47,12 @@ public class DockerClientProcessor extends AbstractCmdProcessor {
      */
     @Override
     public CmdParam parseCmdParam(String param) {
-        DockerClientCmdParam dockerParam = DockerClientCmdParam.builder().build();
+        DockerClientCmdParam dockerParam = super.parseJson(param, DockerClientCmdParam.class);
 
-        String certPath = sentinelConfig.getProcessor().getDocker().getCertPath();
-        dockerParam.setCertPath(certPath);
+        if (StringUtils.isBlank(dockerParam.getCertPath())) {
+            String certPath = sentinelConfig.getProcessor().getDocker().getCertPath();
+            dockerParam.setCertPath(certPath);
+        }
 
         return dockerParam;
     }
@@ -87,10 +90,20 @@ public class DockerClientProcessor extends AbstractCmdProcessor {
 
 
 
+    // todo 优化架构逻辑，更具有扩展性
     private Result  processCmd(DockerClient dockerClient,DockerClientCmdParam dockerParam) {
         switch (dockerParam.getCmd()) {
             case ps -> {
-                List<Container> containers = dockerClient.listContainersCmd().exec();
+                List<Container> containers = dockerClient.listContainersCmd().withShowAll(true).exec();
+                for (Container container : containers) {
+                    log.debug("Container ID: {}, Image:{}, status:{}, name:{}", container.getId(), container.getImage(), container.getStatus(), container.getNames()[0]);
+                }
+                return Result.success(containers);
+            }
+            case ps_filter -> {
+                List<Container> containers = dockerClient.listContainersCmd()
+                        .withFilter(dockerParam.getArgs().getOrDefault("filterName","id"),List.of(dockerParam.getArgs().getOrDefault("filterValue","id")))
+                        .withShowAll(true).exec();
                 for (Container container : containers) {
                     log.debug("Container ID: {}, Image:{}, status:{}, name:{}", container.getId(), container.getImage(), container.getStatus(), container.getNames()[0]);
                 }

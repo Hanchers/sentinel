@@ -3,6 +3,7 @@ package com.hancher.sentinel.core.processor;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.hancher.sentinel.core.config.SentinelConfig;
 import com.hancher.sentinel.enums.ProcessorTypeEnum;
+import com.hancher.sentinel.exception.SentinelRunException;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,5 +49,23 @@ public  abstract class AbstractCmdProcessor implements InitializingBean, CmdProc
     @Override
     public void afterPropertiesSet() {
         this.register(supportType(), this);
+    }
+
+
+
+    /**
+     * 解析json
+     * @param json json
+     * @param clazz 类
+     * @param <T> 泛型
+     * @return 结果
+     */
+    protected <T> T parseJson(String json, Class<T> clazz) {
+        try {
+            return jsonMapper.readValue(json, clazz);
+        } catch (Exception e) {
+            log.error("json解析异常", e);
+            throw new SentinelRunException("json解析异常");
+        }
     }
 }

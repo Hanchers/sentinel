@@ -12,6 +12,8 @@ import java.util.List;
 @Builder
 @Accessors(chain = true)
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class BashCmdParam  extends CmdParam{
 
     @NotBlank(message = "bash命令不能为空")

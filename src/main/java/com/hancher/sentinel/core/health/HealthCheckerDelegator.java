@@ -3,9 +3,10 @@ package com.hancher.sentinel.core.health;
 import com.hancher.sentinel.core.dto.NodeConfigDTO;
 import com.hancher.sentinel.core.dto.Result;
 import com.hancher.sentinel.entity.ServiceNode;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.hancher.sentinel.core.health.AbstractHealthChecker.DEFAULT_SERVICE_NAME;
@@ -19,8 +20,14 @@ import static com.hancher.sentinel.core.health.AbstractHealthChecker.DEFAULT_SER
  */
 @Component
 public class HealthCheckerDelegator {
-    @Resource
-    private Map<String, HealthChecker> healthCheckerMap;
+    private final Map<String, HealthChecker> healthCheckerMap = new HashMap<>();
+
+    public HealthCheckerDelegator(List<HealthChecker> list) {
+        for (HealthChecker healthChecker : list) {
+            healthCheckerMap.put(healthChecker.getCheckStrategy(), healthChecker);
+        }
+    }
+
 
     /**
      * 节点健康检查

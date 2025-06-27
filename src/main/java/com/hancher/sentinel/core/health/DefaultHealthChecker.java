@@ -2,9 +2,7 @@ package com.hancher.sentinel.core.health;
 
 import com.hancher.sentinel.core.dto.NodeConfigDTO;
 import com.hancher.sentinel.core.dto.Result;
-import com.hancher.sentinel.core.processor.AbstractCmdProcessor;
 import com.hancher.sentinel.core.processor.CmdProcessor;
-import com.hancher.sentinel.enums.ProcessorTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +14,20 @@ import java.util.Optional;
  * @author hancher
  * @since 1.0
  */
-@Component(AbstractHealthChecker.DEFAULT_SERVICE_NAME)
+@Component
 @Slf4j
 public class DefaultHealthChecker extends AbstractHealthChecker {
+
+    /**
+     * 获取检查策略
+     *
+     * @return 检查策略
+     */
+    @Override
+    public String getCheckStrategy() {
+        return AbstractHealthChecker.DEFAULT_SERVICE_NAME;
+    }
+
     /**
      * 检查节点存活状态
      *
@@ -27,21 +36,15 @@ public class DefaultHealthChecker extends AbstractHealthChecker {
      */
     @Override
     public Result check(NodeConfigDTO node) {
-        String processorType = node.getProcessMethod();
-        Optional<ProcessorTypeEnum> anEnum = ProcessorTypeEnum.getByName(processorType);
-        if (anEnum.isEmpty()) {
-            log.error("不支持的执行器类型：{}", processorType);
-            return Result.fail("不支持的执行器类型:"+processorType);
-        }
-
-        Optional<CmdProcessor> instance = AbstractCmdProcessor.getInstance(anEnum.get());
+        String processMethod = node.getProcessMethod();
+        Optional<CmdProcessor> instance = getProcessorInstance(processMethod);
 
         if (instance.isEmpty()) {
-            log.error("没有找到执行器：{}", anEnum);
-            return Result.fail("没有找到执行器:"+anEnum);
+            log.error("没有找到执行器：{}", processMethod);
+            return Result.fail("没有找到执行器:"+processMethod);
         }
         return instance.
                 map(cmdProcessor -> cmdProcessor.process(cmdProcessor.parseCmdParam(node.getProcessCmd())))
-                .orElse(Result.fail("不支持的执行器类型" + processorType));
+                .orElse(Result.fail("不支持的执行器类型" + processMethod));
     }
 }

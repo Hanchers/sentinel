@@ -14,6 +14,12 @@ import com.hancher.sentinel.core.dto.Result;
 public interface HealthChecker {
 
     /**
+     * 获取检查策略
+     * @return 检查策略
+     */
+    String getCheckStrategy();
+
+    /**
      * 检查服务节点是否存活
      * @param node 服务配置
      * @return 结果
