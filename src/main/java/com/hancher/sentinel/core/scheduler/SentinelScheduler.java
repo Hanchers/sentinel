@@ -58,7 +58,7 @@ public class SentinelScheduler {
     private void scanFailCluster() {
         log.info("扫描下线集群，尝试恢复下线集群");
         // 查询所有下线的集群
-        List<ServiceCluster> downClusters = clusterService.listByStatus(ServiceClusterStatusEnum.down,ServiceClusterStatusEnum.up);
+        List<ServiceCluster> downClusters = clusterService.listByStatus(ServiceClusterStatusEnum.down, ServiceClusterStatusEnum.up);
         if (downClusters.isEmpty()) {
             log.info("无下线或等待集群，跳过。。");
             return;
@@ -96,13 +96,13 @@ public class SentinelScheduler {
 
         ServiceClusterStatusEnum status = ServiceClusterStatusEnum.down;
         if (success == nodes.size()) {
-            log.info("--集群{{}({})节点全部恢复",  cluster.getName(), cluster.getId());
+            log.info("--集群{{}({})节点全部恢复", cluster.getName(), cluster.getId());
             status = ServiceClusterStatusEnum.ok;
-        } else if (success >= cluster.getMinAliveNum()){
-            log.info("--集群{}({})节点达到最小存活数量",  cluster.getName(), cluster.getId());
+        } else if (success >= cluster.getMinAliveNum()) {
+            log.info("--集群{}({})节点达到最小存活数量", cluster.getName(), cluster.getId());
             status = ServiceClusterStatusEnum.up;
-        } else  {
-            log.info("--集群{}({})恢复失败",  cluster.getName(), cluster.getId());
+        } else {
+            log.info("--集群{}({})恢复失败", cluster.getName(), cluster.getId());
         }
 
         if (cluster.getStatus() != status) {
@@ -114,6 +114,7 @@ public class SentinelScheduler {
 
     /**
      * 扫描重启下线节点
+     *
      * @return 1成功，0失败
      */
     private int restartNode(ServiceNode node) {
@@ -140,13 +141,14 @@ public class SentinelScheduler {
 
     /**
      * 通知等待集群
+     *
      * @param preCluster 前置集群
      */
     private void noticeWaitCluster(ServiceCluster preCluster) {
         // 验证前置集群状态
         if (preCluster.getStatus() == ServiceClusterStatusEnum.down
                 || preCluster.getStatus() == ServiceClusterStatusEnum.wait) {
-            log.info("激活下游集群任务，前置集群{}({})状态为{}未恢复，跳过", preCluster.getName(),preCluster.getId(), preCluster.getStatus());
+            log.info("激活下游集群任务，前置集群{}({})状态为{}未恢复，跳过", preCluster.getName(), preCluster.getId(), preCluster.getStatus());
             return;
         }
 
@@ -155,7 +157,7 @@ public class SentinelScheduler {
 
         for (ServiceCluster waitCluster : waitClusters) {
             if (waitCluster.getStatus() == ServiceClusterStatusEnum.ok) {
-                log.info("当前集群{}({})已完全恢复，跳过", waitCluster.getName(),waitCluster.getId());
+                log.info("当前集群{}({})已完全恢复，跳过", waitCluster.getName(), waitCluster.getId());
                 continue;
             }
             // 重启 wait, down, up 状态的集群
@@ -175,6 +177,7 @@ public class SentinelScheduler {
 
     /**
      * 集群状态扫描, 广度优先遍历
+     *
      * @param clusterIds 每一层的集群ID
      */
     private void checkClusters(Set<Long> clusterIds) {
@@ -195,6 +198,7 @@ public class SentinelScheduler {
 
     /**
      * 集群状态扫描
+     *
      * @param clusterId 集群ID
      */
     private void checkCluster(Long clusterId) {
@@ -212,9 +216,9 @@ public class SentinelScheduler {
         ServiceCluster cluster = clusterService.getById(clusterId);
         if (success == nodes.size()) {
             cluster.setStatus(ServiceClusterStatusEnum.ok);
-        } else if (success >= cluster.getMinAliveNum()){
+        } else if (success >= cluster.getMinAliveNum()) {
             cluster.setStatus(ServiceClusterStatusEnum.up);
-        } else  {
+        } else {
             // 查验前置节点是否下线，因为bfs,此时认为前置节点已经验证结束了
             Set<Long> pre = innerClusterDag.getPre(clusterId);
             List<ServiceCluster> preClusters = clusterService.listByIds(new ArrayList<>(pre));
@@ -235,6 +239,7 @@ public class SentinelScheduler {
 
     /**
      * 节点状态扫描
+     *
      * @param node 节点
      * @return 1成功，0失败
      */
