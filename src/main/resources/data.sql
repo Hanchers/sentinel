@@ -1,11 +1,11 @@
 -- 集群
-INSERT OR IGNORE INTO service_cluster (id,name,remark,status,min_alive_num,create_time,update_time) VALUES
-	 (1,'a_cluster',NULL,'down',1,'2025-06-09 18:17:45','2025-06-18 14:49:59'),
-	 (2,'b_cluster',NULL,'down',1,'2025-06-18 14:50:17','2025-06-18 14:50:17'),
-	 (3,'c_cluster',NULL,'down',1,'2025-06-18 14:51:58','2025-06-18 14:51:58'),
-	 (4,'d_cluster',NULL,'down',1,'2025-06-18 14:51:58','2025-06-18 14:51:58'),
-	 (5,'e_cluster',NULL,'down',1,'2025-06-18 14:51:58','2025-06-18 14:51:58'),
-	 (6,'f_cluster',NULL,'down',1,'2025-06-18 14:51:58','2025-06-18 14:51:58');
+INSERT OR IGNORE INTO service_cluster (id,name,remark,status,min_alive_num,depend_clusters,create_time,update_time) VALUES
+	 (1,'a_cluster',NULL,'down',1,'0','2025-06-09 18:17:45','2025-06-18 14:49:59'),
+	 (2,'b_cluster',NULL,'down',1,'1','2025-06-18 14:50:17','2025-06-18 14:50:17'),
+	 (3,'c_cluster',NULL,'down',1,'0','2025-06-18 14:51:58','2025-06-18 14:51:58'),
+	 (4,'d_cluster',NULL,'down',1,'3','2025-06-18 14:51:58','2025-06-18 14:51:58'),
+	 (5,'e_cluster',NULL,'down',1,'3','2025-06-18 14:51:58','2025-06-18 14:51:58'),
+	 (6,'f_cluster',NULL,'down',1,'2,4,6','2025-06-18 14:51:58','2025-06-18 14:51:58');
 
 -- 服务节点
 INSERT OR IGNORE INTO service_node (id,name,remark,status,cluster_id,health_check_method,health_check_cmd,restart_method,restart_cmd,create_time,update_time) VALUES

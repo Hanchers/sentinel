@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS service_cluster (
     remark TEXT, -- 备注
     status TEXT NOT NULL default 'down', -- 节点状态，枚举：down-不可用、up-达到最小存活数量、ok-全部服务可用、wait-等待依赖恢复、
     min_alive_num INTEGER NOT NULL default 1, -- 服务集群最小存活数量
+    depend_clusters NOT NULL default '0',
     create_time TEXT NOT NULL default (DATETIME('now', 'localtime')),
     update_time TEXT NOT NULL default (DATETIME('now', 'localtime'))
 );

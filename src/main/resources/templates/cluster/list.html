@@ -28,7 +28,8 @@
 </head>
 <body>
 <h1>服务集群列表</h1>
-<a href="/service-clusters/new">新增服务集群</a>
+<a href="/cluster/new">新增服务集群</a>
+<button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#addClusterModel">新增服务集群</button>
 <table>
     <thead>
     <tr>
@@ -55,5 +56,7 @@
     </tr>
     </tbody>
 </table>
+
+<th:block th:include="include :: footer" />
 </body>
 </html>
