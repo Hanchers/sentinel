@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <th:block th:insert="~{include :: header('哨兵监控')}"/>
 
-    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/sentinel/css/style.css}" rel="stylesheet"/>
 </head>
-<body class="fixed-sidebar full-height-layout gray-bg "  style="overflow: hidden">
+<body class="fixed-sidebar full-height-layout gray-bg " style="overflow: hidden">
 <div id="wrapper">
 
     <!--左侧导航开始-->
@@ -22,20 +22,19 @@
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
                 <li>
-                    <a class="menuItem"><i class="fa fa-home"></i> <span class="nav-label">首页</span> </a>
-                </li>
-                <li th:each="menu : ${menus}">
-                    <a th:class="@{${!#strings.isEmpty(menu.url) && menu.url != '#'} ? ${menu.target}}" th:href="@{${#strings.isEmpty(menu.url)} ? |#| : ${menu.url}}" th:data-refresh="${menu.isRefresh == '0'}">
-                        <i class="fa fa-bar-chart-o"></i>
-                        <span class="nav-label" th:text="${menu.menuName}">一级菜单</span>
-                        <span th:class="${#strings.isEmpty(menu.url) || menu.url == '#'} ? |fa arrow|"></span>
+                    <a class="menuItem" th:href="@{/index}" th:data-refresh="false">
+                        <i class="fa fa-home"></i> <span class="nav-label">首页</span>
                     </a>
-                    <ul class="nav nav-second-level collapse">
-                        <li th:each="cmenu : ${menu.children}">
-                            <a th:if="${#lists.isEmpty(cmenu.children)}" th:class="${#strings.isEmpty(cmenu.target)} ? |menuItem| : ${cmenu.target}" th:utext="${cmenu.menuName}" th:href="@{${cmenu.url}}" th:data-refresh="${cmenu.isRefresh == '0'}">二级菜单</a>
-                            <a th:if="${not #lists.isEmpty(cmenu.children)}" href="javascript:;">[[${cmenu.menuName}]]<span class="fa arrow"></span></a>
-                        </li>
-                    </ul>
+                </li>
+                <li>
+                    <a class="menuItem" th:href="@{/cluster/list}" th:data-refresh="false">
+                        <i class="fa-solid fa-tents"></i> <span class="nav-label">集群配置</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menuItem" th:href="@{/dag/overview}" th:data-refresh="false">
+                        <i class="fa-solid fa-diagram-project"></i> <span class="nav-label">依赖图</span>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -44,15 +43,6 @@
 
     <!--右侧部分开始-->
     <div id="page-wrapper" class="gray-bg dashbard-1">
-        <div class="row border-bottom">
-            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
-                <div class="navbar-header">
-                    <a class="navbar-minimalize minimalize-styl-2" style="color:#FFF;" href="javascript:;" title="收起菜单">
-                        <i class="fa fa-bars"></i>
-                    </a>
-                </div>
-            </nav>
-        </div>
         <div class="row content-tabs">
             <button class="roll-nav roll-left tabLeft">
                 <i class="fa fa-backward"></i>
@@ -68,15 +58,16 @@
             <a href="javascript:void(0);" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
         </div>
 
-        <a id="ax_close_max" class="ax_close_max" href="javascript:;" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
+        <a id="ax_close_max" class="ax_close_max" href="javascript:;" title="关闭全屏">
+            <i class="fa fa-times-circle-o"></i>
+        </a>
 
         <div class="row mainContent" id="content-main" th:classappend="${mainClass}">
-            <iframe class="sentinel_iframe" name="iframe0" width="100%" height="100%" th:data-id="@{/index/home}"
-                    th:src="@{/index/home}" frameborder="0" seamless></iframe>
+            <iframe class="sentinel_iframe" name="iframe0" width="100%" height="100%" th:data-id="@{/index/home}" th:src="@{/index/home}"></iframe>
         </div>
 
         <div th:if="${footer}" class="footer">
-            <div class="pull-right">© [[${copyrightYear}]] RuoYi Copyright </div>
+            <div class="pull-right">© 2025 Sentinel Copyright</div>
         </div>
     </div>
     <!--右侧部分结束-->
@@ -84,6 +75,14 @@
 </div>
 <!-- 全局js -->
 <th:block th:insert="~{include :: footer}"/>
+<script th:src="@{/sentinel/js/index.js?v=1.0.0}"></script>
+<script th:src="@{/sentinel/js/common.js?v=1.0.0}"></script>
 
+<script>
+    // history（表示去掉地址的#）否则地址以"#"形式展示
+    var mode = "history";
+    // 是否页签切换滚动到顶部
+    var isScrollToTop = true;
+</script>
 </body>
 </html>

@@ -25,7 +25,7 @@ public class ServiceClusterController {
     private ServiceClusterService clusterService;
 
 
-    @GetMapping
+    @GetMapping("/list")
     public String list(Model model) {
         model.addAttribute("serviceClusters", clusterService.list());
         return "cluster/list";

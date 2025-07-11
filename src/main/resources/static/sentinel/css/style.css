@@ -35,6 +35,10 @@ a:focus {
     outline: none;
 }
 
+.nav {
+    display: block
+}
+
 .nav>li>a {
     color: #a7b1c2;
     font-weight: 600;
@@ -3310,7 +3314,7 @@ nav.page-tabs .page-tabs-content {
 }
 
 .roll-right.tabRight {
-    right: 60px;
+    right: 75px;
 }
 
 .roll-right.btn-group {
@@ -3326,7 +3330,7 @@ nav.page-tabs .page-tabs-content {
 .roll-right.tabReload {
     background: #fff;
     height: 38px;
-    width: 60px;
+    width: 75px;
     outline: none;
 }
 
@@ -7044,4 +7048,8 @@ nav .logo {
 	top: 0px;
 	z-index: 9998;
 	margin: 0;
+}
+
+.sentinel_iframe {
+    border: none;
 }
