@@ -28,6 +28,15 @@ public class ServiceClusterController {
     @GetMapping("/list")
     public String list(Model model) {
         model.addAttribute("serviceClusters", clusterService.list());
+
+        List<ServiceCluster> list = clusterService.list();
+        List<SentinelKey> clusterOption = new ArrayList<>();
+        clusterOption.add(SentinelKey.builder().value(DagNodeEnum.start.getCode() + "").text("开始节点").build());
+        for (ServiceCluster serviceCluster : list) {
+            clusterOption.add(SentinelKey.builder().value(serviceCluster.getId() + "").text(serviceCluster.getName()).build());
+        }
+
+        model.addAttribute("clusterOption", clusterOption);
         return "cluster/list";
     }
 
@@ -46,9 +55,9 @@ public class ServiceClusterController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute ClusterParam param) {
+    public String save(@ModelAttribute("clusterParam") ClusterParam param) {
         System.out.println(param);
-        return "redirect:/cluster";
+        return "redirect:/cluster/list";
     }
 
     @GetMapping("/{id}/edit")

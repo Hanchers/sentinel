@@ -22,7 +22,7 @@
         <div class="sidebar-collapse">
             <ul class="nav" id="side-menu">
                 <li>
-                    <a class="menuItem" th:href="@{/index}" th:data-refresh="false">
+                    <a class="menuItem" th:href="@{/index/home}" th:data-refresh="false">
                         <i class="fa fa-home"></i> <span class="nav-label">首页</span>
                     </a>
                 </li>
@@ -63,7 +63,8 @@
         </a>
 
         <div class="row mainContent" id="content-main" th:classappend="${mainClass}">
-            <iframe class="sentinel_iframe" name="iframe0" width="100%" height="100%" th:data-id="@{/index/home}" th:src="@{/index/home}"></iframe>
+            <iframe class="sentinel_iframe" name="iframe0" width="100%" height="100%" th:data-id="@{/index/home}"
+                    th:src="@{/index/home}"></iframe>
         </div>
 
         <div th:if="${footer}" class="footer">
@@ -73,16 +74,18 @@
     <!--右侧部分结束-->
 
 </div>
-<!-- 全局js -->
+
 <th:block th:insert="~{include :: footer}"/>
 <script th:src="@{/sentinel/js/index.js?v=1.0.0}"></script>
 <script th:src="@{/sentinel/js/common.js?v=1.0.0}"></script>
-
 <script>
     // history（表示去掉地址的#）否则地址以"#"形式展示
     var mode = "history";
     // 是否页签切换滚动到顶部
     var isScrollToTop = true;
+    // 是否页签与菜单联动
+    var isLinkage = true;
 </script>
+<!-- 全局js -->
 </body>
 </html>
