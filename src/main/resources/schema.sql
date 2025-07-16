@@ -26,13 +26,4 @@ CREATE TABLE IF NOT EXISTS service_cluster (
     update_time TEXT NOT NULL default (DATETIME('now', 'localtime'))
 );
 
--- 依赖的有向无环图
-CREATE TABLE IF NOT EXISTS dependent_dag (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    source_cluster_id INTEGER NOT NULL default '0',
-    target_cluster_id INTEGER NOT NULL default '-1',
-    create_time TEXT NOT NULL default (DATETIME('now', 'localtime')),
-    update_time TEXT NOT NULL default (DATETIME('now', 'localtime')),
-    UNIQUE(source_cluster_id, target_cluster_id)
-);
 
