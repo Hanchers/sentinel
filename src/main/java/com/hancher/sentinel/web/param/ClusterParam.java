@@ -1,5 +1,9 @@
 package com.hancher.sentinel.web.param;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,8 +25,12 @@ import java.util.List;
 @Data
 public class ClusterParam {
 
+    @NotBlank(message = "集群名称不能为空")
     private String name;
     private String remark;
+    @NotNull(message = "最小存活数不能为空")
+    @Min(value = 1, message = "最小存活数不能小于1")
     private Integer minAliveNum;
+    @NotEmpty(message = "上游集群不能为空")
     private List<String> dependClusters;
 }

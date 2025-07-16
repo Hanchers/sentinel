@@ -1,14 +1,21 @@
 package com.hancher.sentinel.core.dag;
 
-import com.hancher.sentinel.entity.DependentDag;
+import com.hancher.sentinel.entity.ServiceCluster;
 import com.hancher.sentinel.enums.DagNodeEnum;
-import com.hancher.sentinel.service.DependentDagService;
+import com.hancher.sentinel.service.ServiceClusterService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * 内部缓存依赖关系构建成图<p/>
@@ -31,30 +38,49 @@ public class InnerClusterDag implements InitializingBean {
     private Map<Long, Set<Long>> REVERSE_DAG = new HashMap<>();
 
     @Resource
-    private DependentDagService dagService;
-
+    private ServiceClusterService clusterService;
 
     /**
      * 项目启动时初始化
      */
     @Override
     public void afterPropertiesSet() {
-
         refresh();
     }
 
+    /**
+     * 根据集群依赖关系构建图
+     */
     public void refresh() {
-        List<DependentDag> all = dagService.list();
-        DAG = new HashMap<>();
-        REVERSE_DAG = new HashMap<>();
+        List<ServiceCluster> all = clusterService.list();
+        for (ServiceCluster cluster : all) {
+            List<String> dependClusters = cluster.getDependClusters();
+            // 没有配置上游依赖，默认添加开始节点
+            if (CollectionUtils.isEmpty(dependClusters)) {
+                dependClusters.add(DagNodeEnum.start.getCode() + "");
+            }
 
-        for (DependentDag dag : all) {
-            DAG.computeIfAbsent(dag.getSourceClusterId(), k -> new HashSet<>()).add(dag.getTargetClusterId());
-            REVERSE_DAG.computeIfAbsent(dag.getTargetClusterId(), k -> new HashSet<>()).add(dag.getSourceClusterId());
+            for (String id : dependClusters) {
+                Long dependClusterId = Long.valueOf(id);
+                DAG.computeIfAbsent(dependClusterId, k -> new HashSet<>()).add(cluster.getId());
+                REVERSE_DAG.computeIfAbsent(cluster.getId(), k -> new HashSet<>()).add(dependClusterId);
+            }
+
         }
 
+        // 找到没有下游依赖的终点
+        HashSet<Long> ends = new HashSet<>(REVERSE_DAG.keySet());
+        ends.removeAll(DAG.keySet());
+
+        for (Long endId : ends) {
+            DAG.computeIfAbsent(endId, k -> new HashSet<>()).add(DagNodeEnum.end.getCode());
+            REVERSE_DAG.computeIfAbsent(DagNodeEnum.end.getCode(), k -> new HashSet<>()).add(endId);
+        }
+
+
         // 检查环，不允许环的出现
-        checkCircle(new HashSet<>(), DagNodeEnum.start.getCode());
+        checkCircle(new HashSet<>(), DagNodeEnum.start.getCode(),DAG);
+
     }
 
     /**
@@ -64,21 +90,45 @@ public class InnerClusterDag implements InitializingBean {
      * @param exist 从起点开始的所有的节点
      * @param start 开始节点
      */
-    private void checkCircle(Set<Long> exist, Long start) {
+    private void checkCircle(Set<Long> exist, Long start,Map<Long, Set<Long>> dagTmp) {
         exist.add(start);
         log.debug("环检查过程：{}", exist);
 
-        Set<Long> next = DAG.getOrDefault(start, new HashSet<>());
+        Set<Long> next = dagTmp.getOrDefault(start, new HashSet<>());
         for (Long id : next) {
             if (exist.contains(id)) {
                 log.error("集群存在循环依赖:{}, 环节点：{}", exist, id);
                 throw new RuntimeException("集群存在循环依赖");
             }
-            checkCircle(exist, id);
+            checkCircle(exist, id,dagTmp);
         }
 
         // 移除当前节点， 针对菱形依赖
         exist.remove(start);
+    }
+
+    /**
+     * 添加节点时检查环
+     *
+     * @param newNode 新节点
+     */
+    public void checkCircleWhenAddNode(ServiceCluster newNode) {
+        List<String> dependClusters = newNode.getDependClusters();
+        // 空不校验
+        if (CollectionUtils.isEmpty(dependClusters)) {
+            return;
+        }
+        // 唯一且第一个
+        if (dependClusters.size() == 1 && dependClusters.get(0).equals(DagNodeEnum.start.getCode()+"")) {
+            return;
+        }
+
+        Map<Long, Set<Long>> dagTmp = new HashMap<>(DAG);
+        for (String id : newNode.getDependClusters()) {
+            dagTmp.computeIfAbsent(Long.parseLong(id), k -> new HashSet<>()).add(Optional.ofNullable(newNode.getId()).orElse(System.currentTimeMillis()));
+        }
+
+        checkCircle(new HashSet<>(), DagNodeEnum.start.getCode(),dagTmp);
     }
 
     /**

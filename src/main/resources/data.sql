@@ -5,7 +5,7 @@ INSERT OR IGNORE INTO service_cluster (id,name,remark,status,min_alive_num,depen
 	 (3,'c_cluster',NULL,'down',1,'0','2025-06-18 14:51:58','2025-06-18 14:51:58'),
 	 (4,'d_cluster',NULL,'down',1,'3','2025-06-18 14:51:58','2025-06-18 14:51:58'),
 	 (5,'e_cluster',NULL,'down',1,'3','2025-06-18 14:51:58','2025-06-18 14:51:58'),
-	 (6,'f_cluster',NULL,'down',1,'2,4,6','2025-06-18 14:51:58','2025-06-18 14:51:58');
+	 (6,'f_cluster',NULL,'down',1,'2,4,5','2025-06-18 14:51:58','2025-06-18 14:51:58');
 
 -- 服务节点
 INSERT OR IGNORE INTO service_node (id,name,remark,status,cluster_id,health_check_method,health_check_cmd,restart_method,restart_cmd,create_time,update_time) VALUES
