@@ -25,6 +25,7 @@ import java.util.List;
 @Data
 public class ClusterParam {
 
+    private Long id;
     @NotBlank(message = "集群名称不能为空")
     private String name;
     private String remark;

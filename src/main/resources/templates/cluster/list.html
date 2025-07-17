@@ -28,7 +28,7 @@
         <td th:text="${cluster.status}"></td>
         <td th:text="${cluster.minAliveNum}"></td>
         <td class="action-buttons">
-            <button class="btn btn-sm btn-primary">编辑</button>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addClusterModel" th:data-row="${jsonMapper.writeValueAsString(cluster)}">编辑</button>
             <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
                     th:data-id="${cluster.id}" th:data-name="${cluster.name}">删除
             </button>
@@ -41,7 +41,8 @@
 <div class="modal fade" id="addClusterModel" tabindex="-1" role="dialog" aria-labelledby="addClusterModelLabel"
      data-bs-backdrop="static" aria-hidden="true">
     <div class="modal-dialog">
-        <form th:action="@{/cluster/save}" method="post" th:object="${clusterParam}">
+        <form id="addClusterForm" th:action="@{/cluster/save}" method="post" th:object="${clusterParam}">
+            <input type="hidden" name="id" id="add-id"/>
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addUserModalLabel">新增服务集群</h5>
@@ -50,23 +51,23 @@
                 <div class="modal-body">
                     <div>
                         <label class="form-label">名称:
-                            <input type="text" name="name" required/>
+                            <input id="add-name" type="text" name="name" required/>
                         </label>
                     </div>
                     <div>
                         <label class="form-label">备注:
-                            <input type="text" name="remark"/>
+                            <input id="add-remark" type="text" name="remark"/>
                         </label>
                     </div>
                     <div>
                         <label class="form-label">最小存活数量:
-                            <input type="number" name="minAliveNum" value="1" min="1" required class="form-i"/>
+                            <input id="add-minAliveNum" type="number" name="minAliveNum" value="1" min="1" required class="form-i"/>
                         </label>
                     </div>
 
                     <div class="form-group" style="width: 100%">
                         <label class="col-xs-2 control-label">上游依赖</label>
-                        <select id="dependClusterSelect" name="dependClusters" class="form-control select2-multiple"
+                        <select id="add-dependClusters" name="dependClusters" class="form-control select2-multiple"
                                 multiple>
                             <option th:each="cluster : ${clusterOption}" th:value="${cluster.value}"
                                     th:text="${cluster.text}"></option>
@@ -82,6 +83,7 @@
         </form>
     </div>
 </div>
+
 
 <!--删除二次确认弹窗-->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
@@ -107,11 +109,27 @@
 
 
 <th:block th:insert="~{include :: footer}"/>
-<th:block th:insert="~{include :: select2-js}"/>
 <script>
 
-    $('#addClusterModel').on('shown.bs.modal', function () {
-        const $select = $('#dependClusterSelect');
+    $('#addClusterModel').on('shown.bs.modal', function (event) {
+        const $select = $('#add-dependClusters');
+        // 清空数据
+        $('#addClusterForm')[0].reset();
+        $select.val(null).trigger('change');
+
+        // 如果是编辑，初始化数据
+        const button = event.relatedTarget;
+        if(button.textContent === '编辑') {
+            const row = JSON.parse(button.getAttribute("data-row"));
+            const modal = $(this);
+            for (let key in row) {
+                const input =  modal.find('#add-'+key);
+                if (input.length >0) {
+                    input.val(row[key]).trigger('change');
+                }
+            }
+        }
+        // 渲染select2
         if (!$select.hasClass("select2-hidden-accessible")) {
             $select.select2({
                 dropdownParent: $('#addClusterModel'),
@@ -131,5 +149,6 @@
     });
 
 </script>
+<th:block th:insert="~{include :: select2-js}"/>
 </body>
 </html>

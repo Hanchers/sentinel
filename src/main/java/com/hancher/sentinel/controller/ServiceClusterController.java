@@ -15,13 +15,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Validated
 @Controller
@@ -58,14 +58,18 @@ public class ServiceClusterController {
         // 检查环
         innerClusterDag.checkCircleWhenAddNode(cluster);
         // 通过，保存依赖
-        clusterService.save(cluster);
+        if (Objects.isNull(cluster.getId())) {
+            clusterService.save(cluster);
+        } else {
+            clusterService.updateById(cluster);
+        }
 
         return "redirect:/cluster/list";
     }
 
-    @GetMapping("/{id}/edit")
-    public String editForm(@PathVariable Integer id, Model model) {
-        return "cluster/form";
+    @PostMapping("/edit")
+    public String edit(@ModelAttribute("clusterParam") @Valid ClusterParam param) {
+        return  "redirect:/cluster/list";
     }
 
     @PostMapping("/delete")
