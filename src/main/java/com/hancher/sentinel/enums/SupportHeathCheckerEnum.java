@@ -19,8 +19,8 @@ public enum SupportHeathCheckerEnum {
     /**
      * 走默认检查器
      */
-    BASH("linux 命令行"),
-    DOCKER_CLIENT("docker 命令行"),
+    BASH("linux命令行"),
+    DOCKER_CLIENT("docker命令行"),
     DOCKER_CHECKER("默认docker检查器"),
     ;
 
