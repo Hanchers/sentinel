@@ -2,6 +2,7 @@ package com.hancher.sentinel.service;
 
 import com.hancher.sentinel.entity.ServiceCluster;
 import com.hancher.sentinel.enums.ServiceClusterStatusEnum;
+import com.hancher.sentinel.web.vo.SentinelKey;
 import com.mybatisflex.core.service.IService;
 
 import java.util.List;
@@ -28,4 +29,10 @@ public interface ServiceClusterService extends IService<ServiceCluster> {
      */
     List<ServiceCluster> listByIds(List<Long> ids);
 
+
+    /**
+     * 获取集群选项
+     * @return 集群选项
+     */
+    List<SentinelKey> listClusterOption(boolean includeStart);
 }

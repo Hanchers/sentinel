@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <th:block th:insert="~{include :: header('服务集群列表')}"/>
+    <th:block th:insert="~{include :: select2-css}"/>
+</head>
+<body>
+<h1>服务集群列表</h1>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNodeModel">新增服务节点
+</button>
+<table class="table table-striped table-hover table-bordered table-responsive">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>名称</th>
+        <th>备注</th>
+        <th>状态</th>
+        <th>所属集群</th>
+        <th>健康检查类型</th>
+        <th>节点重启类型</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="node : ${nodeList}">
+        <td th:text="${node.id}"></td>
+        <td th:text="${node.name}"></td>
+        <td th:text="${node.remark}"></td>
+        <td th:text="${node.status}"></td>
+        <td th:text="${node.clusterId}"></td>
+        <td th:text="${node.healthCheckMethod}"></td>
+        <td th:text="${node.restartMethod}"></td>
+        <td class="action-buttons">
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" name="edit" data-bs-target="#addNodeModel"
+                    th:data-row="${jsonMapper.writeValueAsString(node)}">编辑
+            </button>
+            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"
+                    th:data-id="${node.id}" th:data-name="${node.name}">删除
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 分页组件 -->
+<div th:if="${pages > 1}" class="d-flex justify-content-center">
+    <nav aria-label="分页导航">
+        <ul class="pagination">
+            <!-- 上一页 -->
+            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/node/list(page=${currentPage - 1}, pageSize=${pageSize})}"
+                   th:if="${currentPage > 1}">上一页</a>
+                <span class="page-link" th:if="${currentPage == 1}">上一页</span>
+            </li>
+
+            <!-- 页码 -->
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(1, pages)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/node/list(page=${i}, pageSize=${pageSize})}"
+                   th:text="${i}"></a>
+            </li>
+
+            <!-- 下一页 -->
+            <li class="page-item" th:classappend="${currentPage == pages} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/node/list(page=${currentPage + 1}, pageSize=${pageSize})}"
+                   th:if="${currentPage < pages}">下一页</a>
+                <span class="page-link" th:if="${currentPage == pages}">下一页</span>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- 分页信息 -->
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <span th:text="'共 ' + ${rows} + ' 条记录'"></span>
+    </div>
+    <div>
+        <form th:action="@{/node/list}" method="get" class="d-flex">
+            <select name="pageSize" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="5" th:selected="${pageSize == 5}">5条/页</option>
+                <option value="10" th:selected="${pageSize == 10}">10条/页</option>
+                <option value="20" th:selected="${pageSize == 20}">20条/页</option>
+                <!--                <option value="50" th:selected="${pageSize == 50}">50条/页</option>-->
+            </select>
+            <input type="hidden" name="page" value="1">
+        </form>
+    </div>
+</div>
+
+<!--新增集群弹窗-->
+<div class="modal fade" id="addNodeModel" tabindex="-1" role="dialog" aria-labelledby="addNodeModelLabel"
+     data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="addNodeForm" th:action="@{/node/save}" method="post" th:object="${nodeParam}">
+            <input type="hidden" name="id" id="add-id"/>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">新增服务节点</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <label class="form-label w-100">节点名称: <span class="text-danger">*</span>
+                            <input id="add-name" type="text" class="form-text w-75" name="name" required/>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="form-label w-100">节点备注:
+                            <input id="add-remark" type="text" class="form-text w-75" name="remark"/>
+                        </label>
+                    </div>
+                    <div class="form-group" style="width: 100%">
+                        <label class="form-label w-100">所属集群: <span class="text-danger">*</span>
+                            <select id="add-clusterId" name="clusterId" class="form-select w-75 select2-multiple">
+                                <option th:each="cluster : ${clusterOption}" th:value="${cluster.value}" th:text="${cluster.text}"></option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="form-group" style="width: 100%">
+                        <label class="form-label w-100">探活方法: <span class="text-danger">*</span>
+                            <select id="add-healthCheckMethod" name="healthCheckMethod" class="form-select w-75 select2-multiple">
+                                <option th:each="o : ${healthCheckerOption}" th:value="${o.value}" th:text="${o.text}"></option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="form-group" style="width: 100%">
+                        <label class="form-label w-100">探活命令: <span class="text-danger">*</span>
+                            <textarea id="add-healthCheckCmd" name="healthCheckCmd" class="form-textarea w-75" required></textarea>
+                        </label>
+
+                    </div>
+
+                    <div class="form-group" style="width: 100%">
+                        <label class="form-label w-100">重启方法: <span class="text-danger">*</span>
+                            <select id="add-restartMethod" name="restartMethod" class="form-select w-75 select2-multiple">
+                                <option th:each="o : ${restarterOption}" th:value="${o.value}" th:text="${o.text}"></option>
+                            </select>
+                        </label>
+                    </div>
+
+
+                    <div class="form-group" style="width: 100%">
+                        <label class="form-label w-100">重启命令: <span class="text-danger">*</span>
+                            <textarea id="add-restartCmd" name="restartCmd" class="form-textarea w-75" required></textarea>
+                        </label>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!--删除二次确认弹窗-->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form th:action="@{/node/delete}" method="post">
+                <input type="hidden" name="id" id="deleteNodeId"/>
+                <div class="modal-header">
+                    <h5 class="modal-title">确认删除</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
+                </div>
+                <div class="modal-body">
+                    <p>确定要删除节点 <strong id="deleteNodeName"></strong> 吗？该操作不可撤销。</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">确认删除</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<th:block th:insert="~{include :: footer}"/>
+<script>
+
+    $('#addNodeModel').on('shown.bs.modal', function (event) {
+        // 清空数据
+        $('#addNodeForm')[0].reset();
+
+        const $select = $('#add-clusterId');
+        const $select2 = $('#add-healthCheckMethod');
+        const $select3 = $('#add-restartMethod');
+
+        $select.val(null).trigger('change');
+        $select2.val(null).trigger('change');
+        $select3.val(null).trigger('change');
+
+        // 渲染select2
+        if (!$select.hasClass("select2-hidden-accessible")) {
+            $select.select2({
+                dropdownParent: $('#addNodeModel'),
+                placeholder: "请选择所属集群",
+                allowClear: true
+            });
+        }
+        if (!$select2.hasClass("select2-hidden-accessible")) {
+            $select2.select2({
+                dropdownParent: $('#addNodeModel'),
+                placeholder: "请选择节点健康检查器",
+                allowClear: true
+            });
+        }
+        if (!$select3.hasClass("select2-hidden-accessible")) {
+            $select3.select2({
+                dropdownParent: $('#addNodeModel'),
+                placeholder: "请选择节点重启器",
+                allowClear: true
+            });
+        }
+
+        // 如果是编辑，初始化数据
+        const button = event.relatedTarget;
+        if(button.name === 'edit') {
+            const row = JSON.parse(button.getAttribute("data-row"));
+            const modal = $(this);
+            for (let key in row) {
+                const input =  modal.find('#add-'+key);
+                if (input.length >0) {
+                    input.val(row[key]).trigger('change');
+                }
+            }
+        }
+    });
+
+    $('#confirmDeleteModal').on('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const name = button.getAttribute('data-name');
+        const modal = $(this);
+        modal.find('#deleteNodeId').val(id);
+        modal.find('#deleteNodeName').text(name);
+    });
+
+</script>
+<th:block th:insert="~{include :: select2-js}"/>
+</body>
+</html>
