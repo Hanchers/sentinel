@@ -31,11 +31,11 @@ public class InnerClusterDag implements InitializingBean {
     /**
      * 集群正向依赖关系
      */
-    private Map<Long, Set<Long>> DAG = new HashMap<>();
+    private final Map<Long, Set<Long>> DAG = new HashMap<>();
     /**
      * 集群逆向依赖关系
      */
-    private Map<Long, Set<Long>> REVERSE_DAG = new HashMap<>();
+    private final Map<Long, Set<Long>> REVERSE_DAG = new HashMap<>();
 
     @Resource
     private ServiceClusterService clusterService;
@@ -52,6 +52,10 @@ public class InnerClusterDag implements InitializingBean {
      * 根据集群依赖关系构建图
      */
     public void refresh() {
+        // 清空历史数据
+        DAG.clear();
+        REVERSE_DAG.clear();
+
         List<ServiceCluster> all = clusterService.list();
         for (ServiceCluster cluster : all) {
             List<String> dependClusters = cluster.getDependClusters();
@@ -119,7 +123,7 @@ public class InnerClusterDag implements InitializingBean {
             return;
         }
         // 唯一且第一个
-        if (dependClusters.size() == 1 && dependClusters.get(0).equals(DagNodeEnum.start.getCode()+"")) {
+        if (dependClusters.size() == 1 && dependClusters.getFirst().equals(DagNodeEnum.start.getCode()+"")) {
             return;
         }
 

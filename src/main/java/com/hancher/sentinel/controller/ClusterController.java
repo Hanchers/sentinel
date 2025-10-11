@@ -2,7 +2,9 @@ package com.hancher.sentinel.controller;
 
 import com.hancher.sentinel.core.dag.InnerClusterDag;
 import com.hancher.sentinel.entity.ServiceCluster;
+import com.hancher.sentinel.enums.DagNodeEnum;
 import com.hancher.sentinel.enums.ServiceClusterStatusEnum;
+import com.hancher.sentinel.exception.SentinelRunException;
 import com.hancher.sentinel.service.ServiceClusterService;
 import com.hancher.sentinel.web.param.ClusterParam;
 import jakarta.validation.Valid;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Validated
 @Controller
@@ -52,12 +55,25 @@ public class ClusterController {
             clusterService.updateById(cluster);
         }
 
+        refreshDag();
+
         return "redirect:/cluster/list";
     }
 
     @PostMapping("/delete")
     public String delete(@RequestParam Long id) {
+        // 校验是否存在下游依赖
+        Set<Long> next = innerClusterDag.getNext(id);
+        if (!next.isEmpty() && !(next.size() == 1 && next.contains(DagNodeEnum.end.getCode()))) {
+            throw new SentinelRunException("存在下游依赖，请先重置下游依赖，再删除此集群");
+        }
+
         clusterService.removeById(id);
+        refreshDag();
         return "redirect:/cluster/list";
+    }
+
+    private void refreshDag() {
+        Thread.ofVirtual().name("cluster-dag-refresh").start(innerClusterDag::refresh);
     }
 }

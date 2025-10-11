@@ -1,7 +1,9 @@
 package com.hancher.sentinel.controller;
 
+import com.hancher.sentinel.core.dag.InnerClusterDag;
 import com.hancher.sentinel.entity.ServiceCluster;
 import com.hancher.sentinel.entity.ServiceNode;
+import com.hancher.sentinel.enums.DagNodeEnum;
 import com.hancher.sentinel.enums.DagNodeTypeEnum;
 import com.hancher.sentinel.service.ServiceClusterService;
 import com.hancher.sentinel.service.ServiceNodeService;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 public class DagController {
     private ServiceClusterService clusterService;
     private ServiceNodeService nodeService;
+    private InnerClusterDag innerClusterDag;
 
     /**
      * 服务依赖 概览
@@ -47,15 +51,15 @@ public class DagController {
         List<DagData.DagNode> nodes = new ArrayList<>(total);
         List<DagData.DagEdge> edges = new ArrayList<>(total);
 
-        nodes.add(buildDagNode(new ServiceCluster().setId(0L).setName("开始")));
+        nodes.add(buildDagNode(new ServiceCluster().setId(DagNodeEnum.start.getCode()).setName("开始")));
         for (ServiceCluster cluster : allCluster) {
             nodes.add(buildDagNode(cluster));
 
             // 集群下属节点
-            List<ServiceNode> clusterNodes = nodeMap.getOrDefault(cluster.getId(), List.of());
-            for (ServiceNode node : clusterNodes) {
-                nodes.add(buildDagNode(node));
-            }
+//            List<ServiceNode> clusterNodes = nodeMap.getOrDefault(cluster.getId(), List.of());
+//            for (ServiceNode node : clusterNodes) {
+//                nodes.add(buildDagNode(node));
+//            }
             // 构建集群边
             String clusterIdStr = cluster.getId().toString();
             for (String start : cluster.getDependClusters()) {
@@ -64,10 +68,16 @@ public class DagController {
             }
 
             // 构建节点边
-            for (ServiceNode node : clusterNodes) {
-                edges.add(buildDagNodeEdge(node.getId().toString(),clusterIdStr));
-            }
+//            for (ServiceNode node : clusterNodes) {
+//                edges.add(buildDagNodeEdge(node.getId().toString(),clusterIdStr));
+//            }
         }
+        // 尾节点
+        long endCode = DagNodeEnum.end.getCode();
+        nodes.add(buildDagNode(new ServiceCluster().setId(endCode).setName("结束")));
+        Set<Long> endNodes = innerClusterDag.getPre(endCode);
+        endNodes.forEach(id ->edges.add(buildDagClusterEdge(id.toString(),endCode+"")));
+
 
         model.addAttribute("dagData", DagData.builder().nodes(nodes).edges(edges).build());
         return "dag/overview";
@@ -75,11 +85,26 @@ public class DagController {
 
 
     private DagData.DagNode buildDagNode(ServiceCluster cluster) {
+        String color;
+        // 判断color. 绿色健康，红色下线，其他过渡色
+        if (cluster.getStatus() == null) {
+            color = "grey";
+        } else {
+            color = switch (cluster.getStatus()) {
+                case up -> "yellow";
+                case down -> "red";
+                case wait -> "blue";
+                case ok -> "green";
+                default -> "blue";
+            };
+        }
+
         return DagData.DagNode.builder()
                 .id(DagNodeTypeEnum.cluster.name()+"-"+cluster.getId())
                 .label(cluster.getName())
                 .size(50)
                 .nodeType(DagNodeTypeEnum.cluster)
+                .color(color)
                 .build();
     }
 

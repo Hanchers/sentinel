@@ -23,7 +23,6 @@ public class IndexController {
 
     @GetMapping("")
     public String index(Model model) {
-        System.out.println("index");
         List<Map<String, Object>> menus = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             Map<String, Object> menu = new HashMap<>();

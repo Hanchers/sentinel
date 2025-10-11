@@ -35,6 +35,7 @@ public class DagData {
         private String label;
         private Integer size;
         private DagNodeTypeEnum nodeType;
+        private String color;
     }
 
     @Builder

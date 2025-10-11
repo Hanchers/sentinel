@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <title>服务依赖关系</title>
@@ -7,7 +7,7 @@
 </head>
 <body>
 <!-- 准备一个容器 -->
-<div id="container" style="width: 100%"></div>
+<div id="container"></div>
 <!--<script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js"></script>-->
 <script th:inline="javascript">
     const { Graph } = G6;
@@ -18,12 +18,13 @@
     };
 
     const graph = new Graph({
-        container: 'container',
+      container: 'container',
       data,
       node: {
         style: {
           size: (d) => d.size,
           labelText: (d) => d.label,
+          fill: (d) => d.color,
         },
       },
       edge: {
@@ -32,31 +33,13 @@
         },
       },
       layout: {
-        type: 'd3-force',
-        link: {
-          distance: (d) => {
-            if (d.source.nodeType === 'cluster') {
-              return 100;
-            }
-            return 30;
-          },
-          strength: (d) => {
-            if (d.source.nodeType === 'cluster') {
-              return 0.7;
-            }
-            return 0.1;
-          },
-        },
-        manyBody: {
-          strength: (d) => {
-            if (d.nodeType === 'cluster') {
-              return -50;
-            }
-            return -10;
-          },
-        },
+        type: 'antv-dagre',
+        rankdir: 'LR',
+        nodeSize: (d) => d.size,
+        nodesep: 40,
+        ranksep: 80,
       },
-      behaviors: ['drag-element-force'],
+      behaviors:  ['drag-element', 'drag-canvas'],
     });
 
     graph.render();
