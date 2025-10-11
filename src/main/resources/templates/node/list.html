@@ -23,7 +23,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="node : ${nodeList}">
+    <tr th:each="node : ${pageInfo.list}">
         <td th:text="${node.id}"></td>
         <td th:text="${node.name}"></td>
         <td th:text="${node.remark}"></td>
@@ -43,54 +43,9 @@
     </tbody>
 </table>
 
-<!-- 分页组件 -->
-<div th:if="${pages > 1}" class="d-flex justify-content-center">
-    <nav aria-label="分页导航">
-        <ul class="pagination">
-            <!-- 上一页 -->
-            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/node/list(page=${currentPage - 1}, pageSize=${pageSize})}"
-                   th:if="${currentPage > 1}">上一页</a>
-                <span class="page-link" th:if="${currentPage == 1}">上一页</span>
-            </li>
-
-            <!-- 页码 -->
-            <li class="page-item"
-                th:each="i : ${#numbers.sequence(1, pages)}"
-                th:classappend="${i == currentPage} ? 'active'">
-                <a class="page-link"
-                   th:href="@{/node/list(page=${i}, pageSize=${pageSize})}"
-                   th:text="${i}"></a>
-            </li>
-
-            <!-- 下一页 -->
-            <li class="page-item" th:classappend="${currentPage == pages} ? 'disabled'">
-                <a class="page-link"
-                   th:href="@{/node/list(page=${currentPage + 1}, pageSize=${pageSize})}"
-                   th:if="${currentPage < pages}">下一页</a>
-                <span class="page-link" th:if="${currentPage == pages}">下一页</span>
-            </li>
-        </ul>
-    </nav>
-</div>
-
-<!-- 分页信息 -->
-<div class="d-flex justify-content-between align-items-center">
-    <div>
-        <span th:text="'共 ' + ${rows} + ' 条记录'"></span>
-    </div>
-    <div>
-        <form th:action="@{/node/list}" method="get" class="d-flex">
-            <select name="pageSize" class="form-select form-select-sm" onchange="this.form.submit()">
-                <option value="5" th:selected="${pageSize == 5}">5条/页</option>
-                <option value="10" th:selected="${pageSize == 10}">10条/页</option>
-                <option value="20" th:selected="${pageSize == 20}">20条/页</option>
-                <!--                <option value="50" th:selected="${pageSize == 50}">50条/页</option>-->
-            </select>
-            <input type="hidden" name="page" value="1">
-        </form>
-    </div>
+<!-- 引入分页组件 -->
+<div th:if="${pageInfo.totalPages > 1}"
+     th:replace="~{component/pagination :: pagination(${pageInfo}, '/cluster/list')}">
 </div>
 
 <!--新增集群弹窗-->

@@ -7,6 +7,8 @@ import com.hancher.sentinel.enums.ServiceClusterStatusEnum;
 import com.hancher.sentinel.exception.SentinelRunException;
 import com.hancher.sentinel.service.ServiceClusterService;
 import com.hancher.sentinel.web.param.ClusterParam;
+import com.hancher.sentinel.web.vo.PageInfo;
+import com.mybatisflex.core.paginate.Page;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -33,8 +35,12 @@ public class ClusterController {
 
 
     @GetMapping("/list")
-    public String list(Model model) {
-        model.addAttribute("serviceClusters", clusterService.list());
+    public String list(@RequestParam(defaultValue = "1") int page,
+                       @RequestParam(defaultValue = "10") int pageSize,
+                       Model model) {
+        Page<ServiceCluster> pageData = clusterService.page(Page.of(page, pageSize));
+
+        model.addAttribute("pageInfo", PageInfo.of(pageData));
         model.addAttribute("clusterOption", clusterService.listClusterOption(true));
         return "cluster/list";
     }

@@ -21,7 +21,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="cluster : ${serviceClusters}">
+    <tr th:each="cluster : ${pageInfo.list}">
         <td th:text="${cluster.id}"></td>
         <td th:text="${cluster.name}"></td>
         <td th:text="${cluster.remark}"></td>
@@ -36,6 +36,11 @@
     </tr>
     </tbody>
 </table>
+
+<!-- 引入分页组件 -->
+<div th:if="${pageInfo.totalPages > 1}"
+     th:replace="~{component/pagination :: pagination(${pageInfo}, '/cluster/list')}">
+</div>
 
 <!--新增集群弹窗-->
 <div class="modal fade" id="addClusterModel" tabindex="-1" role="dialog" aria-labelledby="addClusterModelLabel"

@@ -7,6 +7,7 @@ import com.hancher.sentinel.enums.SupportRestarterEnum;
 import com.hancher.sentinel.service.ServiceClusterService;
 import com.hancher.sentinel.service.ServiceNodeService;
 import com.hancher.sentinel.web.param.NodeParam;
+import com.hancher.sentinel.web.vo.PageInfo;
 import com.mybatisflex.core.paginate.Page;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -37,11 +38,7 @@ public class NodeController {
                        Model model) {
         Page<ServiceNode> pageData = nodeService.page(Page.of(page, pageSize));
 
-        model.addAttribute("nodeList", pageData.getRecords());
-        model.addAttribute("rows", pageData.getTotalRow());
-        model.addAttribute("pages", pageData.getTotalPage());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("pageSize", pageSize);
+        model.addAttribute("pageInfo", PageInfo.of(pageData));
         model.addAttribute("clusterOption", clusterService.listClusterOption(false));
         model.addAttribute("healthCheckerOption", SupportHeathCheckerEnum.listOption());
         model.addAttribute("restarterOption", SupportRestarterEnum.listOption());
