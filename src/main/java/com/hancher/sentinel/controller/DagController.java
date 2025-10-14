@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 首页
@@ -42,12 +40,8 @@ public class DagController {
     public String overview(Model model) {
         // 查询所有的集群
         List<ServiceCluster> allCluster = clusterService.list();
-        // 查询所有的集群节点
-        List<ServiceNode> allNode = nodeService.list();
 
-        Map<Long, List<ServiceNode>> nodeMap = allNode.stream().collect(Collectors.groupingBy(ServiceNode::getClusterId));
-
-        int total = allCluster.size() + allNode.size();
+        int total = allCluster.size();
         List<DagData.DagNode> nodes = new ArrayList<>(total);
         List<DagData.DagEdge> edges = new ArrayList<>(total);
 
@@ -55,22 +49,13 @@ public class DagController {
         for (ServiceCluster cluster : allCluster) {
             nodes.add(buildDagNode(cluster));
 
-            // 集群下属节点
-//            List<ServiceNode> clusterNodes = nodeMap.getOrDefault(cluster.getId(), List.of());
-//            for (ServiceNode node : clusterNodes) {
-//                nodes.add(buildDagNode(node));
-//            }
+
             // 构建集群边
             String clusterIdStr = cluster.getId().toString();
             for (String start : cluster.getDependClusters()) {
                 edges.add(buildDagClusterEdge(start,clusterIdStr));
 
             }
-
-            // 构建节点边
-//            for (ServiceNode node : clusterNodes) {
-//                edges.add(buildDagNodeEdge(node.getId().toString(),clusterIdStr));
-//            }
         }
         // 尾节点
         long endCode = DagNodeEnum.end.getCode();

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" style="height: 100%;" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>服务依赖关系</title>
     <th:block th:insert="~{include :: g6-js}"/>
 </head>
-<body>
+<body style="height: 100%;">
 <!-- 准备一个容器 -->
-<div id="container"></div>
+<div id="container" style="width: 100%; height: 100%"></div>
 <!--<script src="https://unpkg.com/@antv/g6@5/dist/g6.min.js"></script>-->
 <script th:inline="javascript">
     const { Graph } = G6;
@@ -34,7 +34,7 @@
       },
       layout: {
         type: 'antv-dagre',
-        rankdir: 'LR',
+<!--        rankdir: 'LR',-->
         nodeSize: (d) => d.size,
         nodesep: 40,
         ranksep: 80,
