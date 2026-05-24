@@ -20,8 +20,8 @@ public enum SupportHeathCheckerEnum {
      * 走默认检查器
      */
     BASH("linux命令行"),
-    DOCKER_CLIENT("docker命令行"),
-    DOCKER_CHECKER("默认docker检查器"),
+    DOCKER_CLIENT("docker客户端"),
+    DOCKER_CHECKER("docker检查器"),
     ;
 
     private final String showName;

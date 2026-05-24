@@ -1,5 +1,6 @@
 package com.hancher.sentinel.web.param;
 
+import com.hancher.sentinel.core.dto.DockerClientCmdParam;
 import com.hancher.sentinel.enums.ServiceNodeStatusEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,4 +38,16 @@ public class NodeParam {
     private String restartMethod;
     @NotBlank(message = "节点重启命令不能为空")
     private String restartCmd;
+
+    /**
+     * docker 客户端参数
+     */
+    @NotBlank(message = "docker服务tcp地址不能为空", groups = DockerClientCmdParam.class)
+    private String tcpHost;
+    private String certPath;
+    // 超时时间，分钟
+    private int timeout;
+    private DockerClientCmdParam.DockerCmd cmd;
+    private String containerIdOrName;
+    private String args;
 }

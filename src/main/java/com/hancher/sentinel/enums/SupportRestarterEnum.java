@@ -21,7 +21,7 @@ public enum SupportRestarterEnum {
      * 走默认检查器
      */
     BASH("linux命令行"),
-    DOCKER_CLIENT("docker命令行"),
+    DOCKER_CLIENT("docker客户端"),
     ;
 
     private final String showName;

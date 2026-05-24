@@ -90,7 +90,14 @@
                         <label class="form-label w-100">探活命令: <span class="text-danger">*</span>
                             <textarea id="add-healthCheckCmd" name="healthCheckCmd" class="form-textarea w-75" required></textarea>
                         </label>
+                    </div>
 
+                    <div id="addContainerIdOrNameGroup" class="d-none" >
+                        <div class="form-group" style="width: 100%">
+                            <label class="form-label w-100">容器id或名称: <span class="text-danger">*</span>
+                                <text id="add-containerIdOrName" name="containerIdOrName" class="form-textarea w-75" required></text>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="form-group" style="width: 100%">
@@ -203,6 +210,21 @@
         modal.find('#deleteNodeId').val(id);
         modal.find('#deleteNodeName').text(name);
     });
+
+    function updateFields() {
+        const value = typeSelect.value;
+
+        if (value === "A") {
+          fieldsA.classList.remove("d-none");
+          fieldsB.classList.add("d-none");
+        } else if (value === "B") {
+          fieldsA.classList.add("d-none");
+          fieldsB.classList.remove("d-none");
+        } else {
+          fieldsA.classList.add("d-none");
+          fieldsB.classList.add("d-none");
+        }
+  }
 
 </script>
 <th:block th:insert="~{include :: select2-js}"/>

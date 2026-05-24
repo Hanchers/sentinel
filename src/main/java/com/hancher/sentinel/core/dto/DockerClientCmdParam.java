@@ -28,7 +28,7 @@ public class DockerClientCmdParam extends CmdParam {
     @NotBlank(message = "docker服务tcp客户端证书地址不能为空")
     private String certPath;
     @Builder.Default
-    private Duration timeout = Duration.ofMinutes(10);
+    private Duration timeout = Duration.ofMinutes(3);
 
     /**
      * docker 命令

@@ -9,10 +9,10 @@ INSERT OR IGNORE INTO service_cluster (id,name,remark,status,min_alive_num,depen
 
 -- 服务节点
 INSERT OR IGNORE INTO service_node (id,name,remark,status,cluster_id,health_check_method,health_check_cmd,restart_method,restart_cmd,create_time,update_time) VALUES
-	 (1,'a_service','a服务','down',1,'bash','ping -c 4 baidu.com','bash','ping -c 4 baidu.com','2025-06-18 15:17:47','2025-06-18 15:17:47'),
-	 (2,'b_service','b服务','down',2,'bash','ping -c 4 baidu.com','bash','ping -c 4 baidu.com','2025-06-18 15:20:50','2025-06-18 15:20:50'),
-	 (3,'c_service','c服务','down',3,'bash','ping -c 4 baidu.com','bash','ping -c 4 baidu.com','2025-06-18 15:17:47','2025-06-18 15:17:47'),
-	 (4,'d_service','d服务','down',4,'bash','ping -c 4 baidu.com','bash','ping -c 4 baidu.com','2025-06-18 15:20:50','2025-06-18 15:20:50'),
-	 (5,'e_service','e服务','down',5,'bash','ping -c 4 baidu.com','bash','ping -c 4 baidu.com','2025-06-18 15:17:47','2025-06-18 15:17:47'),
-	 (6,'f_service','f服务','down',6,'bash','ping -c 4 baidu.com','bash','ping -c 4 baidu.com','2025-06-18 15:20:50','2025-06-18 15:20:50');
+	 (1,'a_service','bash服务、','down',1,'bash','ping -c 4 baidu.com','BASH','ping -c 4 baidu.com','2025-06-18 15:17:47','2025-06-18 15:17:47'),
+	 (2,'b_service','b服务','down',2,'bash','ping -c 4 baidu.com','BASH','ping -c 4 baidu.com','2025-06-18 15:20:50','2025-06-18 15:20:50'),
+	 (3,'c_service','c服务','down',3,'bash','ping -c 4 baidu.com','BASH','ping -c 4 baidu.com','2025-06-18 15:17:47','2025-06-18 15:17:47'),
+	 (4,'d_service','d服务','down',4,'bash','ping -c 4 baidu.com','BASH','ping -c 4 baidu.com','2025-06-18 15:20:50','2025-06-18 15:20:50'),
+	 (5,'e_service','e服务','down',5,'bash','ping -c 4 baidu.com','BASH','ping -c 4 baidu.com','2025-06-18 15:17:47','2025-06-18 15:17:47'),
+	 (6,'f_service','f服务','down',6,'bash','ping -c 4 baidu.com','BASH','ping -c 4 baidu.com','2025-06-18 15:20:50','2025-06-18 15:20:50');
 
