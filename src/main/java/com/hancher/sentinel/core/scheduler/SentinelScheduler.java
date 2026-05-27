@@ -1,8 +1,10 @@
 package com.hancher.sentinel.core.scheduler;
 
+import com.hancher.sentinel.core.config.SentinelConfig;
 import com.hancher.sentinel.core.dag.InnerClusterDag;
 import com.hancher.sentinel.core.dto.Result;
 import com.hancher.sentinel.core.health.HealthCheckerDelegator;
+import com.hancher.sentinel.core.processor.DockerClientProcessor;
 import com.hancher.sentinel.core.starter.NodeStarterDelegator;
 import com.hancher.sentinel.entity.ServiceCluster;
 import com.hancher.sentinel.entity.ServiceNode;
@@ -17,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -34,6 +37,8 @@ public class SentinelScheduler {
     private final ServiceClusterService clusterService;
     private final NodeStarterDelegator nodeStarterDelegator;
     private final HealthCheckerDelegator healthCheckerDelegator;
+    private final DockerClientProcessor dockerClientProcessor;
+    private final SentinelConfig sentinelConfig;
 
     /**
      * 核心心跳探活任务
@@ -50,6 +55,19 @@ public class SentinelScheduler {
         scanFailCluster();
         // 项目依赖状态扫描
         scanProjectHealth();
+    }
+
+    /**
+     * 定时回收空闲的 Docker 连接（每 10 分钟执行一次）
+     */
+    @Scheduled(initialDelay = 60000, fixedDelay = 600000)
+    public void cleanupIdleDockerClients() {
+        int maxIdleMinutes = sentinelConfig.getProcessor().getDocker().getMaxIdleMinutes();
+        if (maxIdleMinutes < 0) {
+            return; // -1 表示不过期
+        }
+        log.debug("开始回收空闲 Docker 连接, 空闲阈值={}分钟", maxIdleMinutes);
+        dockerClientProcessor.evictIdleClients(Duration.ofMinutes(maxIdleMinutes).toMillis());
     }
 
     /**
