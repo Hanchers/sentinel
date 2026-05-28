@@ -39,7 +39,7 @@ public class SentinelScheduler {
     private final HealthCheckerDelegator healthCheckerDelegator;
     private final DockerClientProcessor dockerClientProcessor;
     private final SentinelConfig sentinelConfig;
-
+    private static boolean HEATH_CHECKED = false;
     /**
      * 核心心跳探活任务
      * <p/>
@@ -74,6 +74,9 @@ public class SentinelScheduler {
      * 集群状态扫描
      */
     private void scanFailCluster() {
+        if (!HEATH_CHECKED) {
+            return;
+        }
         log.info("扫描下线集群，尝试恢复下线集群");
         // 查询所有下线的集群
         List<ServiceCluster> downClusters = clusterService.listByStatus(ServiceClusterStatusEnum.down, ServiceClusterStatusEnum.up);
@@ -190,6 +193,7 @@ public class SentinelScheduler {
         log.info("【心跳】根据项目依赖情况重新扫描项目节点状态，更新集群状态图");
         // 从起点开始，一个集群一个集群的扫描
         checkClusters(Set.of(DagNodeEnum.start.getCode()));
+        HEATH_CHECKED = true;
     }
 
 

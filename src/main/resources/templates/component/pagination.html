@@ -2,54 +2,58 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 
 <!-- 分页组件 -->
-<div th:fragment="pagination(pageInfo, baseUrl)" class="pagination-container">
-    <div th:if="${pageInfo.pages > 1}" class="d-flex justify-content-center">
-        <nav aria-label="分页导航">
-            <ul class="pagination">
-                <!-- 上一页 -->
-                <li class="page-item" th:classappend="${pageInfo.currentPage == 1} ? 'disabled'">
-                    <a class="page-link"
-                       th:href="@{${baseUrl}(page=${pageInfo.currentPage - 1}, pageSize=${pageInfo.pageSize})}"
-                       th:if="${currentPage > 1}">上一页</a>
-                    <span class="page-link" th:if="${pageInfo.currentPage == 1}">上一页</span>
-                </li>
-
-                <!-- 页码 -->
-                <li class="page-item"
-                    th:each="i : ${#numbers.sequence(1, pageInfo.pages)}"
-                    th:classappend="${i == pageInfo.currentPage} ? 'active'">
-                    <a class="page-link"
-                       th:href="@{${baseUrl}(page=${i}, pageSize=${pageInfo.pageSize})}"
-                       th:text="${i}"></a>
-                </li>
-
-                <!-- 下一页 -->
-                <li class="page-item" th:classappend="${pageInfo.currentPage == pageInfo.pages} ? 'disabled'">
-                    <a class="page-link"
-                       th:href="@{${baseUrl}(page=${pageInfo.currentPage + 1}, pageSize=${pageInfo.pageSize})}"
-                       th:if="${pageInfo.currentPage < pageInfo.pages}">下一页</a>
-                    <span class="page-link" th:if="${pageInfo.currentPage == pageInfo.pages}">下一页</span>
-                </li>
-            </ul>
-        </nav>
-    </div>
-
-    <!-- 分页信息 -->
-    <div class="d-flex justify-content-between align-items-center">
-        <div>
+<div th:fragment="pagination(pageInfo, baseUrl)" class="sentinel-pagination">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div class="text-muted small">
             <span th:text="'共 ' + ${pageInfo.rows} + ' 条记录'"></span>
         </div>
-        <div>
-            <form th:action="@{${baseUrl}}" method="get" class="d-flex">
+
+        <div th:if="${pageInfo.pages > 1}" class="d-flex align-items-center gap-2">
+            <nav aria-label="分页导航">
+                <ul class="pagination mb-0">
+                    <!-- 上一页 -->
+                    <li class="page-item" th:classappend="${pageInfo.currentPage == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{${baseUrl}(page=${pageInfo.currentPage - 1}, pageSize=${pageInfo.pageSize})}"
+                           th:if="${pageInfo.currentPage > 1}">
+                            <i class="fa-solid fa-chevron-left small"></i>
+                        </a>
+                        <span class="page-link" th:if="${pageInfo.currentPage == 1}">
+                            <i class="fa-solid fa-chevron-left small"></i>
+                        </span>
+                    </li>
+
+                    <!-- 页码 -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(1, pageInfo.pages)}"
+                        th:classappend="${i == pageInfo.currentPage} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{${baseUrl}(page=${i}, pageSize=${pageInfo.pageSize})}"
+                           th:text="${i}"></a>
+                    </li>
+
+                    <!-- 下一页 -->
+                    <li class="page-item" th:classappend="${pageInfo.currentPage == pageInfo.pages} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{${baseUrl}(page=${pageInfo.currentPage + 1}, pageSize=${pageInfo.pageSize})}"
+                           th:if="${pageInfo.currentPage < pageInfo.pages}">
+                            <i class="fa-solid fa-chevron-right small"></i>
+                        </a>
+                        <span class="page-link" th:if="${pageInfo.currentPage == pageInfo.pages}">
+                            <i class="fa-solid fa-chevron-right small"></i>
+                        </span>
+                    </li>
+                </ul>
+            </nav>
+
+            <form th:action="@{${baseUrl}}" method="get" class="d-flex" style="min-width: 100px;">
                 <select name="pageSize" class="form-select form-select-sm" onchange="this.form.submit()">
                     <option value="5" th:selected="${pageInfo.pageSize == 5}">5条/页</option>
                     <option value="10" th:selected="${pageInfo.pageSize == 10}">10条/页</option>
                     <option value="20" th:selected="${pageInfo.pageSize == 20}">20条/页</option>
-                    <!--                <option value="50" th:selected="${pageSize == 50}">50条/页</option>-->
                 </select>
                 <input type="hidden" name="page" value="1">
             </form>
         </div>
     </div>
 </div>
-

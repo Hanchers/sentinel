@@ -31,7 +31,7 @@ public class NodeStarterDelegator {
      * @return 启动结果
      */
     public Result restartNode(ServiceNode node) {
-        NodeConfigDTO nodeConfig = NodeConfigDTO.of(node.getHealthCheckMethod(), node.getHealthCheckCmd());
+        NodeConfigDTO nodeConfig = NodeConfigDTO.of(node.getRestartMethod(), node.getRestartCmd());
 
         return nodeStarterMap.getOrDefault(nodeConfig.getProcessMethod(), nodeStarterMap.get(DEFAULT_SERVICE_NAME))
                 .restart(nodeConfig);

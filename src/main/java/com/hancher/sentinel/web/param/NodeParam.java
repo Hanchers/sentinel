@@ -32,11 +32,9 @@ public class NodeParam {
     private Long clusterId;
     @NotBlank(message = "节点探活方法不能为空")
     private String healthCheckMethod;
-    @NotBlank(message = "节点探活命令不能为空")
     private String healthCheckCmd;
     @NotBlank(message = "节点重启方法不能为空")
     private String restartMethod;
-    @NotBlank(message = "节点重启命令不能为空")
     private String restartCmd;
 
     /**

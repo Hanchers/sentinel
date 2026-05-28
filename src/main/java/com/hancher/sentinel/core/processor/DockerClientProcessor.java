@@ -78,6 +78,7 @@ public class DockerClientProcessor extends AbstractCmdProcessor {
             dockerParam.setCertPath(certPath);
         }
 
+
         // 如果未指定超时或超时过长，使用合理默认值
         if (dockerParam.getTimeout() == null || dockerParam.getTimeout().compareTo(DEFAULT_RESPONSE_TIMEOUT) > 0) {
             dockerParam.setTimeout(DEFAULT_RESPONSE_TIMEOUT);
@@ -142,6 +143,7 @@ public class DockerClientProcessor extends AbstractCmdProcessor {
                     .withDockerTlsVerify(true)
                     .withDockerCertPath(dockerParam.getCertPath())
                     .build();
+
 
             DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
                     .dockerHost(config.getDockerHost())

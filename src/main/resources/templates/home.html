@@ -2,10 +2,115 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>首页</title>
-
+    <th:block th:insert="~{include :: header('哨兵监控 - 首页')}"/>
 </head>
-<body class="gray-bg">
-hello world
+<body class="sentinel-page">
+<div class="page-wrapper">
+    <!-- 欢迎横幅 -->
+    <div class="sentinel-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none;">
+        <div class="card-body-custom" style="padding: 2rem;">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                <div>
+                    <h3 class="mb-1 fw-bold" style="color: #fff;">
+                        <i class="fa-solid fa-shield-halved me-2"></i>哨兵监控系统
+                    </h3>
+                    <p class="mb-0 opacity-75" style="max-width: 500px;">
+                        服务集群健康检查与自动故障恢复平台，实时监控集群状态，确保服务高可用
+                    </p>
+                </div>
+                <div class="text-end">
+                    <div class="opacity-75 small">集群总数</div>
+                    <div class="fw-bold" style="font-size: 2rem;" th:text="${clusterCount ?: '--'}">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="dashboard-stats">
+        <div class="stat-card card-primary">
+            <div class="stat-icon">
+                <i class="fa-solid fa-server"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${clusterCount ?: '--'}">--</div>
+                <div class="stat-label">集群总数</div>
+            </div>
+        </div>
+        <div class="stat-card card-success">
+            <div class="stat-icon">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${nodeCount ?: '--'}">--</div>
+                <div class="stat-label">节点总数</div>
+            </div>
+        </div>
+        <div class="stat-card card-warning">
+            <div class="stat-icon">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${pendingCount ?: '--'}">--</div>
+                <div class="stat-label">待处理告警</div>
+            </div>
+        </div>
+        <div class="stat-card card-danger">
+            <div class="stat-icon">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${downCount ?: '--'}">--</div>
+                <div class="stat-label">下线集群</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快捷导航 -->
+    <div class="sentinel-card">
+        <div class="card-header-custom">
+            <i class="fa-solid fa-bolt me-2"></i>快捷导航
+        </div>
+        <div class="card-body-custom">
+            <div class="quick-links">
+                <a href="/cluster/list" target="iframe0" class="quick-link-card">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>集群配置</span>
+                </a>
+                <a href="/node/list" target="iframe0" class="quick-link-card">
+                    <i class="fa-solid fa-cubes"></i>
+                    <span>节点配置</span>
+                </a>
+                <a href="/dag/overview" target="iframe0" class="quick-link-card">
+                    <i class="fa-solid fa-diagram-project"></i>
+                    <span>依赖关系图</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 系统信息 -->
+    <div class="sentinel-card">
+        <div class="card-header-custom">
+            <i class="fa-solid fa-circle-info me-2"></i>系统信息
+        </div>
+        <div class="card-body-custom">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-check-circle text-success"></i>
+                        <span class="text-muted">系统运行正常</span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-clock text-primary"></i>
+                        <span class="text-muted">扫描周期: 60秒</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
