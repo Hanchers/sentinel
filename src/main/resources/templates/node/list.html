@@ -28,7 +28,7 @@
                     <th>所属集群</th>
                     <th>健康检查类型</th>
                     <th>节点重启类型</th>
-                    <th>操作</th>
+                    <th style="width: 360px; min-width: 360px;">操作</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -45,6 +45,14 @@
                     <td><span class="small" th:text="${node.healthCheckMethod}"></span></td>
                     <td><span class="small" th:text="${node.restartMethod}"></span></td>
                     <td class="action-buttons">
+                        <button class="btn btn-sm btn-outline-success btn-action btn-node-health"
+                                th:data-id="${node.id}" th:data-name="${node.name}">
+                            <i class="fa-solid fa-stethoscope me-1"></i>检查
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning btn-action btn-node-restart"
+                                th:data-id="${node.id}" th:data-name="${node.name}">
+                            <i class="fa-solid fa-rotate-right me-1"></i>重启
+                        </button>
                         <button class="btn btn-sm btn-outline-primary btn-action" data-bs-toggle="modal"
                                 name="edit" data-bs-target="#addNodeModel"
                                 th:data-row="${jsonMapper.writeValueAsString(node)}">
@@ -211,8 +219,8 @@
 
 <th:block th:insert="~{include :: footer}"/>
 <script>
+    /* ========== 新增/编辑弹窗逻辑 ========== */
     $('#addNodeModel').on('shown.bs.modal', function (event) {
-        // 清空数据
         $('#addNodeForm')[0].reset();
 
         const $select = $('#add-clusterId');
@@ -223,7 +231,6 @@
         $select2.val(null).trigger('change');
         $select3.val(null).trigger('change');
 
-        // 渲染select2
         if (!$select.hasClass("select2-hidden-accessible")) {
             $select.select2({
                 dropdownParent: $('#addNodeModel'),
@@ -246,7 +253,6 @@
             });
         }
 
-        // 如果是编辑，初始化数据
         const button = event.relatedTarget;
         if (button.name === 'edit') {
             const row = JSON.parse(button.getAttribute("data-row"));
@@ -259,11 +265,9 @@
             }
         }
 
-        // 初始化字段显隐
         updateFields();
     });
 
-    // 监听探活方法和重启方法的切换，动态调整字段显隐
     $('#add-healthCheckMethod').on('change.select2', updateFields);
     $('#add-restartMethod').on('change.select2', updateFields);
 
@@ -276,11 +280,6 @@
         modal.find('#deleteNodeName').text(name);
     });
 
-    /**
-     * 根据探活方法和重启方法的选择，动态显示/隐藏对应字段
-     * - DOCKER_CHECKER：隐藏探活命令，显示容器ID/名称输入框
-     * - DOCKER_CLIENT：隐藏重启命令，显示容器ID/名称输入框
-     */
     function updateFields() {
         const healthCheckMethod = $('#add-healthCheckMethod').val();
         const restartMethod = $('#add-restartMethod').val();
@@ -288,7 +287,6 @@
         const isDockerChecker = healthCheckMethod === 'DOCKER_CHECKER';
         const isDockerClient = restartMethod === 'DOCKER_CLIENT';
 
-        // 监控检查命令显隐控制
         if (isDockerChecker) {
             $('#no-docker-notice-health').addClass('d-none');
             $('#docker-notice-health').removeClass('d-none');
@@ -297,7 +295,6 @@
             $('#docker-notice-health').addClass('d-none');
         }
 
-        // 重启命令显隐控制
         if (isDockerClient) {
             $('#no-docker-notice-restart').addClass('d-none');
             $('#docker-notice-restart').removeClass('d-none');
@@ -305,8 +302,81 @@
             $('#no-docker-notice-restart').removeClass('d-none');
             $('#docker-notice-restart').addClass('d-none');
         }
+    }
 
+    /* ========== 节点操作：检查 / 重启 ========== */
+    var actionInProgress = false;
 
+    $(document).on('click', '.btn-node-health, .btn-node-restart', function () {
+        if (actionInProgress) {
+            showToast('warning', '操作进行中，请稍后再试');
+            return;
+        }
+
+        const $btn = $(this);
+        const id = $btn.data('id');
+        const name = $btn.data('name');
+        const isCheck = $btn.hasClass('btn-node-health');
+        const url = isCheck ? '/node/check' : '/node/restart';
+        const actionLabel = isCheck ? '检查' : '重启';
+
+        if (!confirm('确定要对节点【' + name + '】执行' + actionLabel + '操作吗？')) {
+            return;
+        }
+
+        actionInProgress = true;
+        const originalHtml = $btn.html();
+        $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i>' + actionLabel + '中...');
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'id=' + encodeURIComponent(id)
+        })
+        .then(function (resp) { return resp.json(); })
+        .then(function (data) {
+            if (data.success) {
+                showToast('success', '【' + name + '】' + actionLabel + '结果：' + (data.output || '成功'));
+                // 延迟刷新页面以展示最新状态
+                setTimeout(function () { location.reload(); }, 800);
+            } else {
+                showToast('danger', '【' + name + '】' + actionLabel + '失败：' + (data.output || '未知错误'));
+            }
+        })
+        .catch(function (err) {
+            showToast('danger', '【' + name + '】' + actionLabel + '请求异常：' + err.message);
+        })
+        .finally(function () {
+            actionInProgress = false;
+            $btn.prop('disabled', false).html(originalHtml);
+        });
+    });
+
+    /* ========== Toast 提示 ========== */
+    function showToast(type, message) {
+        var bgClass = 'bg-success';
+        var icon = 'fa-circle-check';
+        if (type === 'danger') { bgClass = 'bg-danger'; icon = 'fa-circle-exclamation'; }
+        else if (type === 'warning') { bgClass = 'bg-warning text-dark'; icon = 'fa-triangle-exclamation'; }
+
+        var $toast = $(
+            '<div class="toast align-items-center text-white border-0 ' + bgClass + '" role="alert" data-bs-delay="4000">' +
+            '  <div class="d-flex">' +
+            '    <div class="toast-body"><i class="fa-solid ' + icon + ' me-2"></i>' + message + '</div>' +
+            '    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>' +
+            '  </div>' +
+            '</div>'
+        );
+
+        var $container = $('#toastContainer');
+        if ($container.length === 0) {
+            $container = $('<div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999;"></div>');
+            $('body').append($container);
+        }
+        $container.append($toast);
+        var toast = new bootstrap.Toast($toast[0]);
+        toast.show();
+        $toast.on('hidden.bs.toast', function () { $(this).remove(); });
     }
 </script>
 <th:block th:insert="~{include :: select2-js}"/>

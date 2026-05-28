@@ -42,7 +42,7 @@ body.sentinel-page {
     border-radius: 10px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     margin-bottom: 1.5rem;
-    overflow: hidden;
+    overflow-x: auto;
 }
 
 .sentinel-card .card-header-custom {
@@ -91,6 +91,11 @@ body.sentinel-page {
 
 .sentinel-table .action-buttons .btn {
     margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+.sentinel-table .action-buttons {
+    white-space: nowrap;
 }
 
 .sentinel-table tbody tr:last-child td {
