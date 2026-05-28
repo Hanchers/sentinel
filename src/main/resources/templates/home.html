@@ -46,24 +46,25 @@
                 <div class="stat-label">节点总数</div>
             </div>
         </div>
-        <div class="stat-card card-warning">
-            <div class="stat-icon">
-                <i class="fa-solid fa-clock"></i>
-            </div>
-            <div class="stat-info">
-                <div class="stat-value" th:text="${pendingCount ?: '--'}">--</div>
-                <div class="stat-label">待处理告警</div>
-            </div>
-        </div>
         <div class="stat-card card-danger">
             <div class="stat-icon">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
             <div class="stat-info">
-                <div class="stat-value" th:text="${downCount ?: '--'}">--</div>
+                <div class="stat-value" th:text="${downCluster ?: '--'}">--</div>
                 <div class="stat-label">下线集群</div>
             </div>
         </div>
+        <div class="stat-card card-warning">
+            <div class="stat-icon">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value" th:text="${downNode ?: '--'}">--</div>
+                <div class="stat-label">下线节点</div>
+            </div>
+        </div>
+
     </div>
 
     <!-- 快捷导航 -->

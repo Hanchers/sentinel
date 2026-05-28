@@ -1,5 +1,11 @@
 package com.hancher.sentinel.controller;
 
+import com.hancher.sentinel.enums.ServiceClusterStatusEnum;
+import com.hancher.sentinel.enums.ServiceNodeStatusEnum;
+import com.hancher.sentinel.service.ServiceClusterService;
+import com.hancher.sentinel.service.ServiceNodeService;
+import com.mybatisflex.core.query.QueryWrapper;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +24,11 @@ import java.util.Map;
  */
 @Controller
 @RequestMapping("/index")
+@AllArgsConstructor
 public class IndexController {
+
+    private final ServiceClusterService clusterService;
+    private final ServiceNodeService nodeService;
 
 
     @GetMapping("")
@@ -41,7 +51,22 @@ public class IndexController {
     }
 
     @GetMapping("/home")
-    public String home() {
+    public String home(Model model) {
+        // 集群总数
+        long clusterCount = clusterService.count();
+        // 节点总数
+        long nodeCount = nodeService.count();
+        // 下线集群（状态为 down 的集群）
+        long downClusterCount = clusterService.listByStatus(ServiceClusterStatusEnum.down).size();
+        // 下线节点（状态为 down 的节点）
+        long downNodeCount = nodeService.count(
+                QueryWrapper.create().where("status = ?", ServiceNodeStatusEnum.down));
+
+        model.addAttribute("clusterCount", clusterCount);
+        model.addAttribute("nodeCount", nodeCount);
+        model.addAttribute("downCluster", downClusterCount);
+        model.addAttribute("downNode", downNodeCount);
+
         return "home";
     }
 
