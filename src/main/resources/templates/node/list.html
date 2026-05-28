@@ -10,9 +10,14 @@
     <!-- 页面标题 -->
     <div class="page-title">
         <span><i class="fa-solid fa-cubes"></i>服务节点列表</span>
-        <button type="button" class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addNodeModel">
-            <i class="fa-solid fa-plus"></i>新增服务节点
-        </button>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-refresh" onclick="location.reload()">
+                <i class="fa-solid fa-arrows-rotate"></i>刷新
+            </button>
+            <button type="button" class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addNodeModel">
+                <i class="fa-solid fa-plus"></i>新增服务节点
+            </button>
+        </div>
     </div>
 
     <!-- 数据表格 -->

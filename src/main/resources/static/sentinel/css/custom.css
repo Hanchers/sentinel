@@ -266,6 +266,28 @@ body.sentinel-page {
     margin-right: 0.35rem;
 }
 
+/* ---------- 刷新按钮样式 ---------- */
+.btn-refresh {
+    border-radius: 8px;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #475569;
+    border-color: #e2e8f0;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+
+.btn-refresh:hover {
+    color: #6366f1;
+    border-color: #6366f1;
+    background: #eef2ff;
+}
+
+.btn-refresh i {
+    margin-right: 0.35rem;
+}
+
 /* ---------- 确认删除弹窗 ---------- */
 .danger-modal .modal-header {
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);

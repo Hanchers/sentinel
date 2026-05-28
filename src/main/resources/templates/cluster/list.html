@@ -10,9 +10,14 @@
     <!-- 页面标题 -->
     <div class="page-title">
         <span><i class="fa-solid fa-layer-group"></i>服务集群列表</span>
-        <button type="button" class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addClusterModel">
-            <i class="fa-solid fa-plus"></i>新增服务集群
-        </button>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-refresh" onclick="location.reload()">
+                <i class="fa-solid fa-arrows-rotate"></i>刷新
+            </button>
+            <button type="button" class="btn btn-add" data-bs-toggle="modal" data-bs-target="#addClusterModel">
+                <i class="fa-solid fa-plus"></i>新增服务集群
+            </button>
+        </div>
     </div>
 
     <!-- 数据表格 -->
